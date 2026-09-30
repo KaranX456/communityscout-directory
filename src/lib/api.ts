@@ -31,16 +31,16 @@ export type SearchMeta = {
 
 export type SearchParamsBody = {
   q: string;
-  minMembers?: number;
-  adaptive?: boolean;
-  kind?: "channel" | "group";
-  category?: string;
-  language?: string;
-  country?: string;
-  showAdult?: boolean;
-  sort?: "best" | "members";
-  limit?: number;
-  offset?: number;
+  minMembers?: number | undefined;
+  adaptive?: boolean | undefined;
+  kind?: "channel" | "group" | undefined;
+  category?: string | undefined;
+  language?: string | undefined;
+  country?: string | undefined;
+  showAdult?: boolean | undefined;
+  sort?: "best" | "members" | undefined;
+  limit?: number | undefined;
+  offset?: number | undefined;
 };
 
 export class ApiError extends Error {
@@ -57,9 +57,9 @@ function unwrap<T>(data: unknown, error: unknown): T {
     throw new ApiError(msg);
   }
   const d = data as Record<string, unknown> | null;
-  if (d && typeof d === "object" && "error" in d && d.error) {
+  if (d && typeof d === "object" && "error" in d && d["error"]) {
     throw new ApiError(
-      (d.message as string) ?? "Something went wrong. Please try again.",
+      (d["message"] as string) ?? "Something went wrong. Please try again.",
     );
   }
   return data as T;
@@ -85,13 +85,13 @@ export async function search(body: SearchParamsBody) {
 export type BrowseRow = Row & { total_count: number };
 
 export async function browse(args: {
-  category?: string | null;
-  language?: string | null;
-  country?: string | null;
-  kind?: string | null;
-  showAdult?: boolean;
-  limit?: number;
-  offset?: number;
+  category?: string | null | undefined;
+  language?: string | null | undefined;
+  country?: string | null | undefined;
+  kind?: string | null | undefined;
+  showAdult?: boolean | undefined;
+  limit?: number | undefined;
+  offset?: number | undefined;
 }) {
   const { data, error } = await supabase.rpc("browse_communities", {
     p_category: args.category ?? null,
@@ -142,8 +142,8 @@ export const categoriesQuery = queryOptions({
 
 export async function submitCommunity(body: {
   link: string;
-  category?: string;
-  note?: string;
+  category?: string | undefined;
+  note?: string | undefined;
   website: string;
 }) {
   const { data, error } = await supabase.functions.invoke("submit-community", { body });

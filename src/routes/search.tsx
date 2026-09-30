@@ -32,6 +32,7 @@ export const Route = createFileRoute("/search")({
 
 function SearchPage() {
   const state = Route.useSearch();
+  const q = state.q ?? "";
   const navigate = useNavigate({ from: "/search" });
 
   const patch = (p: Partial<SearchState>) =>
@@ -42,12 +43,12 @@ function SearchPage() {
 
   const query = useInfiniteQuery({
     queryKey: ["search", state],
-    enabled: state.q.trim().length > 0,
+    enabled: q.trim().length > 0,
     initialPageParam: 0,
     retry: 0,
     queryFn: ({ pageParam }) =>
       search({
-        q: state.q,
+        q,
         minMembers,
         adaptive,
         kind: state.kind as "channel" | "group" | undefined,
@@ -73,7 +74,7 @@ function SearchPage() {
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-6">
       <SearchBar
-        initialValue={state.q}
+        initialValue={q}
         size="sm"
         onSubmitQuery={(q) => navigate({ search: (prev) => ({ ...prev, q }) })}
       />
@@ -97,7 +98,7 @@ function SearchPage() {
           ) : null}
 
           <GatedContent>
-            {!state.q.trim() ? (
+            {!q.trim() ? (
               <p className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
                 Type something above to start searching.
               </p>
@@ -115,7 +116,7 @@ function SearchPage() {
                 <ul className="space-y-3">
                   {rows.map((row) => (
                     <li key={row.id}>
-                      <ResultCard row={row} query={state.q} />
+                      <ResultCard row={row} query={q} />
                     </li>
                   ))}
                 </ul>
