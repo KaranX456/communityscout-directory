@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { createFileRoute as _unused } from "@tanstack/react-router";
 
 import { SearchBar } from "@/components/search-bar";
 import { categoriesQuery, facetsQuery } from "@/lib/api";
@@ -96,4 +95,3 @@ function Index() {
   );
 }
 
-void _unused;
