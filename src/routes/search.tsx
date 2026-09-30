@@ -78,10 +78,6 @@ function SearchPage() {
         onSubmitQuery={(q) => navigate({ search: (prev) => ({ ...prev, q }) })}
       />
 
-      <div className="mt-4 flex items-center gap-2 lg:hidden">
-        <FilterPanel state={state} onChange={patch} />
-      </div>
-
       <div className="mt-6 flex gap-8">
         <FilterPanel state={state} onChange={patch} />
 
