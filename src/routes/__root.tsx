@@ -11,6 +11,10 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AgeGate } from "@/components/age-gate";
+import { SiteFooter, SiteHeader } from "@/components/site-chrome";
+import { BRAND } from "@/lib/brand";
+
 
 function NotFoundComponent() {
   return (
