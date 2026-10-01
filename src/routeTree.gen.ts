@@ -19,8 +19,11 @@ import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as TakedownRouteImport } from './routes/takedown'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminBlocklistRouteImport } from './routes/admin.blocklist'
 import { Route as AdminCommunitiesRouteImport } from './routes/admin.communities'
+import { Route as AdminImportRouteImport } from './routes/admin.import'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
+import { Route as AdminTakedownsRouteImport } from './routes/admin.takedowns'
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
 import { Route as CategoryIndexRouteImport } from './routes/category.index'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
@@ -75,14 +78,29 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBlocklistRoute = AdminBlocklistRouteImport.update({
+  id: '/blocklist',
+  path: '/blocklist',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCommunitiesRoute = AdminCommunitiesRouteImport.update({
   id: '/communities',
   path: '/communities',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminImportRoute = AdminImportRouteImport.update({
+  id: '/import',
+  path: '/import',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
   id: '/submissions',
   path: '/submissions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTakedownsRoute = AdminTakedownsRouteImport.update({
+  id: '/takedowns',
+  path: '/takedowns',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -111,8 +129,11 @@ export interface FileRoutesByFullPath {
   '/submit': typeof SubmitRoute
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
+  '/admin/blocklist': typeof AdminBlocklistRoute
   '/admin/communities': typeof AdminCommunitiesRoute
+  '/admin/import': typeof AdminImportRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/takedowns': typeof AdminTakedownsRoute
   '/admin/login': typeof AdminLoginRoute
   '/category/$slug': typeof CategorySlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -127,8 +148,11 @@ export interface FileRoutesByTo {
   '/submit': typeof SubmitRoute
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
+  '/admin/blocklist': typeof AdminBlocklistRoute
   '/admin/communities': typeof AdminCommunitiesRoute
+  '/admin/import': typeof AdminImportRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/takedowns': typeof AdminTakedownsRoute
   '/admin/login': typeof AdminLoginRoute
   '/category/$slug': typeof CategorySlugRoute
   '/admin': typeof AdminIndexRoute
@@ -145,8 +169,11 @@ export interface FileRoutesById {
   '/submit': typeof SubmitRoute
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
+  '/admin/blocklist': typeof AdminBlocklistRoute
   '/admin/communities': typeof AdminCommunitiesRoute
+  '/admin/import': typeof AdminImportRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
+  '/admin/takedowns': typeof AdminTakedownsRoute
   '/admin_/login': typeof AdminLoginRoute
   '/category/$slug': typeof CategorySlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -164,8 +191,11 @@ export interface FileRouteTypes {
     | '/submit'
     | '/takedown'
     | '/terms'
+    | '/admin/blocklist'
     | '/admin/communities'
+    | '/admin/import'
     | '/admin/submissions'
+    | '/admin/takedowns'
     | '/admin/login'
     | '/category/$slug'
     | '/admin/'
@@ -180,8 +210,11 @@ export interface FileRouteTypes {
     | '/submit'
     | '/takedown'
     | '/terms'
+    | '/admin/blocklist'
     | '/admin/communities'
+    | '/admin/import'
     | '/admin/submissions'
+    | '/admin/takedowns'
     | '/admin/login'
     | '/category/$slug'
     | '/admin'
@@ -197,8 +230,11 @@ export interface FileRouteTypes {
     | '/submit'
     | '/takedown'
     | '/terms'
+    | '/admin/blocklist'
     | '/admin/communities'
+    | '/admin/import'
     | '/admin/submissions'
+    | '/admin/takedowns'
     | '/admin_/login'
     | '/category/$slug'
     | '/admin/'
@@ -292,6 +328,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/blocklist': {
+      id: '/admin/blocklist'
+      path: '/blocklist'
+      fullPath: '/admin/blocklist'
+      preLoaderRoute: typeof AdminBlocklistRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/communities': {
       id: '/admin/communities'
       path: '/communities'
@@ -299,11 +342,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCommunitiesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/import': {
+      id: '/admin/import'
+      path: '/import'
+      fullPath: '/admin/import'
+      preLoaderRoute: typeof AdminImportRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/submissions': {
       id: '/admin/submissions'
       path: '/submissions'
       fullPath: '/admin/submissions'
       preLoaderRoute: typeof AdminSubmissionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/takedowns': {
+      id: '/admin/takedowns'
+      path: '/takedowns'
+      fullPath: '/admin/takedowns'
+      preLoaderRoute: typeof AdminTakedownsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin_/login': {
@@ -331,14 +388,20 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminBlocklistRoute: typeof AdminBlocklistRoute
   AdminCommunitiesRoute: typeof AdminCommunitiesRoute
+  AdminImportRoute: typeof AdminImportRoute
   AdminSubmissionsRoute: typeof AdminSubmissionsRoute
+  AdminTakedownsRoute: typeof AdminTakedownsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminBlocklistRoute: AdminBlocklistRoute,
   AdminCommunitiesRoute: AdminCommunitiesRoute,
+  AdminImportRoute: AdminImportRoute,
   AdminSubmissionsRoute: AdminSubmissionsRoute,
+  AdminTakedownsRoute: AdminTakedownsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
