@@ -18,6 +18,9 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as TakedownRouteImport } from './routes/takedown'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminCommunitiesRouteImport } from './routes/admin.communities'
+import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
 import { Route as CategoryIndexRouteImport } from './routes/category.index'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
@@ -67,6 +70,21 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCommunitiesRoute = AdminCommunitiesRouteImport.update({
+  id: '/communities',
+  path: '/communities',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
+  id: '/submissions',
+  path: '/submissions',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin_/login',
   path: '/admin/login',
@@ -87,28 +105,33 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/submit': typeof SubmitRoute
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
+  '/admin/communities': typeof AdminCommunitiesRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/login': typeof AdminLoginRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/category/': typeof CategoryIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/submit': typeof SubmitRoute
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
+  '/admin/communities': typeof AdminCommunitiesRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/login': typeof AdminLoginRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/admin': typeof AdminIndexRoute
   '/category': typeof CategoryIndexRoute
 }
 export interface FileRoutesById {
@@ -116,14 +139,17 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/submit': typeof SubmitRoute
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
+  '/admin/communities': typeof AdminCommunitiesRoute
+  '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin_/login': typeof AdminLoginRoute
   '/category/$slug': typeof CategorySlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/category/': typeof CategoryIndexRoute
 }
 export interface FileRouteTypes {
@@ -138,22 +164,27 @@ export interface FileRouteTypes {
     | '/submit'
     | '/takedown'
     | '/terms'
+    | '/admin/communities'
+    | '/admin/submissions'
     | '/admin/login'
     | '/category/$slug'
+    | '/admin/'
     | '/category/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/$'
     | '/about'
-    | '/admin'
     | '/privacy'
     | '/search'
     | '/submit'
     | '/takedown'
     | '/terms'
+    | '/admin/communities'
+    | '/admin/submissions'
     | '/admin/login'
     | '/category/$slug'
+    | '/admin'
     | '/category'
   id:
     | '__root__'
@@ -166,8 +197,11 @@ export interface FileRouteTypes {
     | '/submit'
     | '/takedown'
     | '/terms'
+    | '/admin/communities'
+    | '/admin/submissions'
     | '/admin_/login'
     | '/category/$slug'
+    | '/admin/'
     | '/category/'
   fileRoutesById: FileRoutesById
 }
@@ -175,7 +209,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   SearchRoute: typeof SearchRoute
   SubmitRoute: typeof SubmitRoute
@@ -251,6 +285,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/communities': {
+      id: '/admin/communities'
+      path: '/communities'
+      fullPath: '/admin/communities'
+      preLoaderRoute: typeof AdminCommunitiesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/submissions': {
+      id: '/admin/submissions'
+      path: '/submissions'
+      fullPath: '/admin/submissions'
+      preLoaderRoute: typeof AdminSubmissionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin_/login': {
       id: '/admin_/login'
       path: '/admin/login'
@@ -275,11 +330,25 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AdminRouteChildren {
+  AdminCommunitiesRoute: typeof AdminCommunitiesRoute
+  AdminSubmissionsRoute: typeof AdminSubmissionsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminCommunitiesRoute: AdminCommunitiesRoute,
+  AdminSubmissionsRoute: AdminSubmissionsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   SearchRoute: SearchRoute,
   SubmitRoute: SubmitRoute,
