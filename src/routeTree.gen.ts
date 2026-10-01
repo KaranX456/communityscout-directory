@@ -12,11 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SubmitRouteImport } from './routes/submit'
 import { Route as TakedownRouteImport } from './routes/takedown'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as AdminLoginRouteImport } from './routes/admin_.login'
 import { Route as CategoryIndexRouteImport } from './routes/category.index'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 
@@ -33,6 +35,11 @@ const SplatRoute = SplatRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -60,6 +67,11 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin_/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategoryIndexRoute = CategoryIndexRouteImport.update({
   id: '/category/',
   path: '/category/',
@@ -75,11 +87,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/submit': typeof SubmitRoute
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
+  '/admin/login': typeof AdminLoginRoute
   '/category/$slug': typeof CategorySlugRoute
   '/category/': typeof CategoryIndexRoute
 }
@@ -87,11 +101,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/submit': typeof SubmitRoute
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
+  '/admin/login': typeof AdminLoginRoute
   '/category/$slug': typeof CategorySlugRoute
   '/category': typeof CategoryIndexRoute
 }
@@ -100,11 +116,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/submit': typeof SubmitRoute
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
+  '/admin_/login': typeof AdminLoginRoute
   '/category/$slug': typeof CategorySlugRoute
   '/category/': typeof CategoryIndexRoute
 }
@@ -114,11 +132,13 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/about'
+    | '/admin'
     | '/privacy'
     | '/search'
     | '/submit'
     | '/takedown'
     | '/terms'
+    | '/admin/login'
     | '/category/$slug'
     | '/category/'
   fileRoutesByTo: FileRoutesByTo
@@ -126,11 +146,13 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/about'
+    | '/admin'
     | '/privacy'
     | '/search'
     | '/submit'
     | '/takedown'
     | '/terms'
+    | '/admin/login'
     | '/category/$slug'
     | '/category'
   id:
@@ -138,11 +160,13 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/about'
+    | '/admin'
     | '/privacy'
     | '/search'
     | '/submit'
     | '/takedown'
     | '/terms'
+    | '/admin_/login'
     | '/category/$slug'
     | '/category/'
   fileRoutesById: FileRoutesById
@@ -151,11 +175,13 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
   PrivacyRoute: typeof PrivacyRoute
   SearchRoute: typeof SearchRoute
   SubmitRoute: typeof SubmitRoute
   TakedownRoute: typeof TakedownRoute
   TermsRoute: typeof TermsRoute
+  AdminLoginRoute: typeof AdminLoginRoute
   CategorySlugRoute: typeof CategorySlugRoute
   CategoryIndexRoute: typeof CategoryIndexRoute
 }
@@ -181,6 +207,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -218,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin_/login': {
+      id: '/admin_/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/category/': {
       id: '/category/'
       path: '/category'
@@ -239,11 +279,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
   PrivacyRoute: PrivacyRoute,
   SearchRoute: SearchRoute,
   SubmitRoute: SubmitRoute,
   TakedownRoute: TakedownRoute,
   TermsRoute: TermsRoute,
+  AdminLoginRoute: AdminLoginRoute,
   CategorySlugRoute: CategorySlugRoute,
   CategoryIndexRoute: CategoryIndexRoute,
 }
