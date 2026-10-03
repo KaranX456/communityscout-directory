@@ -4,7 +4,7 @@ export const BRAND = {
   description:
     "A free, independent search engine for public Telegram channels and groups. Search by topic, language, country and size.",
   disclaimer: "Independent directory. Not affiliated with or endorsed by Telegram.",
-  contactEmail: "hello@communityscout.example",
+  contactEmail: "kipkoech.eugene@students.jkuat.ac.ke",
 } as const;
 
 export const SAFETY_NOTICE =

@@ -122,7 +122,13 @@ function Takedown() {
             className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm"
           >
             We couldn&apos;t send that request. Please try again, or email{" "}
-            {BRAND.contactEmail}.
+            <a
+              href={`mailto:${BRAND.contactEmail}`}
+              className="underline underline-offset-2"
+            >
+              {BRAND.contactEmail}
+            </a>
+            .
           </p>
         ) : null}
       </form>
