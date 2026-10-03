@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
+import { CategoryIcon } from "@/components/category-icon";
 import { ErrorState, SafetyNotice } from "@/components/notices";
 import { PageShell } from "@/components/site-chrome";
 import { categoriesQuery, facetsQuery } from "@/lib/api";
@@ -50,14 +51,14 @@ function CategoryIndex() {
               <Link
                 to="/category/$slug"
                 params={{ slug: c.slug }}
-                className="block rounded-2xl border border-border bg-card p-4 shadow-card transition-shadow hover:shadow-lift"
+                className="flex min-h-28 items-center gap-4 rounded-md border border-border bg-card p-4 transition-colors hover:border-primary hover:bg-muted"
               >
-                <span className="font-medium">{c.name}</span>
+                <CategoryIcon slug={c.slug} /><span className="min-w-0 font-medium">{c.name}
                 {counts.get(c.slug) ? (
                   <span className="mt-1 block text-xs text-muted-foreground">
-                    {counts.get(c.slug)!.toLocaleString()} communities
+                    {Number(counts.get(c.slug)).toLocaleString()} communities
                   </span>
-                ) : null}
+                ) : null}</span>
               </Link>
             </li>
           ))}
