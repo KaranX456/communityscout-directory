@@ -1,0 +1,4 @@
+- [ ] Audit public pages and states at 375/768/1280 in light/dark
+- [ ] Polish home, search, cards, filters and responsive chrome
+- [ ] Add branding assets and public route metadata
+- [ ] Polish legal pages, 404, accessibility and verify

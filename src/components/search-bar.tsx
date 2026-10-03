@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 
 export function SearchBar({
@@ -51,18 +52,18 @@ export function SearchBar({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Search topics, e.g. learn English, crypto news, football…"
-          className={`w-full rounded-2xl border border-border bg-card pl-11 pr-28 text-foreground shadow-card outline-none transition-shadow placeholder:text-muted-foreground focus-visible:shadow-lift ${
-            big ? "h-14 text-base" : "h-11 text-sm pr-24"
+          className={`w-full rounded-md border border-border bg-card pl-11 pr-24 text-foreground shadow-card outline-none transition-shadow placeholder:text-muted-foreground focus-visible:shadow-lift ${
+            big ? "h-16 text-base" : "h-12 text-sm"
           }`}
         />
-        <button
+        <Button
           type="submit"
-          className={`absolute right-2 inline-flex items-center rounded-xl bg-primary px-4 font-medium text-primary-foreground transition-colors hover:bg-primary/90 ${
-            big ? "h-11 text-sm" : "h-8 text-xs px-3"
+          className={`absolute right-2 inline-flex items-center rounded-md bg-primary px-4 font-medium text-primary-foreground transition-colors hover:bg-primary/90 ${
+            "h-11 text-sm"
           }`}
         >
           Search
-        </button>
+        </Button>
       </div>
     </form>
   );
