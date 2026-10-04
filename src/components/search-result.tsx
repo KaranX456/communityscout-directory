@@ -1,6 +1,13 @@
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { useMutation } from "@tanstack/react-query";
-import { BadgeCheck, ExternalLink } from "lucide-react";
+import { BadgeCheck, ExternalLink, MessageSquare } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 
 import { sendFeedback, type Row } from "@/lib/api";
@@ -69,29 +76,29 @@ export function ResultCard({ row, query = "" }: { row: Row; query?: string }) {
           {initials}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <h3 className="truncate text-base font-semibold tracking-tight">{row.title}</h3>
+          <h3 className="break-words text-base font-semibold leading-snug tracking-tight line-clamp-2">
+            {row.title}
+          </h3>
+          <p className="mt-0.5 truncate text-sm text-muted-foreground">@{row.username}</p>
+
+          <div className="mt-2 flex flex-wrap items-center gap-1.5">
             {row.verified ? (
               <Chip tone="primary">
                 <BadgeCheck className="h-3 w-3" aria-hidden="true" /> Verified
               </Chip>
             ) : null}
             {row.adult ? <Chip tone="warn">Adult</Chip> : null}
-          </div>
-          <p className="mt-0.5 truncate text-sm text-muted-foreground">@{row.username}</p>
-
-          {row.description ? (
-            <p className="mt-2 line-clamp-3-safe text-sm text-muted-foreground">
-              {row.description}
-            </p>
-          ) : null}
-
-          <div className="mt-3 flex flex-wrap items-center gap-1.5">
             <Chip>{row.kind === "group" ? "Group" : "Channel"}</Chip>
             {row.category ? <Chip>{titleCase(row.category)}</Chip> : null}
             {row.language ? <Chip>{languageName(row.language)}</Chip> : null}
             {row.country ? <Chip>{countryName(row.country)}</Chip> : null}
           </div>
+
+          {row.description ? (
+            <p className="mt-2 break-words line-clamp-3-safe text-sm text-muted-foreground">
+              {row.description}
+            </p>
+          ) : null}
 
           <p className="mt-3 text-xs text-muted-foreground">
             <span className="font-medium text-foreground">
@@ -101,35 +108,45 @@ export function ResultCard({ row, query = "" }: { row: Row; query?: string }) {
             {lastPost ? ` · last post ${lastPost}` : ""}
           </p>
 
-          <div className="mt-4 flex flex-wrap items-center gap-3">
+          <div className="mt-4 flex flex-wrap items-center gap-2">
             <a
               href={url}
               target="_blank"
               rel="noopener noreferrer nofollow"
               onClick={openLink}
-              className="inline-flex h-10 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              className="inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               Open in Telegram
               <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
             </a>
 
             {sent ? (
-              <p className="text-xs text-muted-foreground">Thanks for the feedback</p>
+              <p role="status" className="px-2 text-xs text-muted-foreground">
+                Thanks for the feedback
+              </p>
             ) : (
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs text-muted-foreground">Was this helpful?</span>
-                {FEEDBACK_OPTIONS.map((o) => (
-                  <button
-                    key={o.kind}
-                    type="button"
-                    disabled={feedback.isPending}
-                    onClick={() => feedback.mutate(o.kind)}
-                    className="rounded-full border border-border px-2.5 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
-                  >
-                    {o.label}
-                  </button>
-                ))}
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  disabled={feedback.isPending}
+                  aria-label={`Give feedback on ${row.title || row.username}`}
+                  className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-border px-3 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+                >
+                  <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                  {feedback.isPending ? "Sending…" : "Feedback"}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuLabel className="text-xs">Was this helpful?</DropdownMenuLabel>
+                  {FEEDBACK_OPTIONS.map((o) => (
+                    <DropdownMenuItem
+                      key={o.kind}
+                      className="min-h-11"
+                      onSelect={() => feedback.mutate(o.kind)}
+                    >
+                      {o.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
         </div>
