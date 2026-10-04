@@ -58,7 +58,7 @@ export function SiteFooter() {
     <footer className="mt-16 border-t border-border bg-muted/30">
       <div className="mx-auto w-full max-w-6xl px-4 py-9 text-sm">
         <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2">
-          {[['About','/about'], ['Categories','/category'], ['Terms','/terms'], ['Privacy','/privacy'], ['Takedown','/takedown'], ['Submit','/submit']].map(([label,to]) =>
+          {([['About','/about'], ['Categories','/category'], ['Terms','/terms'], ['Privacy','/privacy'], ['Takedown','/takedown'], ['Submit','/submit']] as [string, string][]).map(([label,to]) =>
             <Link key={to} to={to} className="inline-flex min-h-11 items-center text-muted-foreground hover:text-foreground">{label}</Link>
           )}
         </nav>
