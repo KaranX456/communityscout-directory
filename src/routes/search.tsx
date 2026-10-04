@@ -115,7 +115,7 @@ function SearchPage() {
         onSubmitQuery={(q) => navigate({ search: (prev) => ({ ...prev, q }) })}
       />
 
-      <div className="mt-6 flex gap-8">
+      <div className="mt-6 flex flex-col gap-4 lg:flex-row lg:gap-8">
         <FilterPanel state={state} onChange={patch} />
 
         <section className="min-w-0 flex-1 space-y-4" aria-label="Results">
