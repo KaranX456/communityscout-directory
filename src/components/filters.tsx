@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { formatMembers } from "@/lib/format";
 import { SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 
@@ -188,8 +190,13 @@ export function FilterPanel(props: {
   state: SearchState;
   onChange: (patch: Patch) => void;
   showMembers?: boolean;
+  compact?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  if (props.compact) return <Sheet open={open} onOpenChange={setOpen}>
+    <div className="filter-pills flex gap-2 overflow-x-auto pb-2" aria-label="Search filters">{[`${formatMembers(props.state.min ?? 10000).replace("~", "")}+ members`, "Type", "Topic", "Language", "Sort", "More"].map((label, i) => <SheetTrigger asChild key={label}><Button variant="outline" className={`min-h-11 shrink-0 rounded-full px-4 text-sm ${i === 0 && (props.state.min ?? 10000) > 0 ? "border-primary text-primary" : "text-muted-foreground"}`} aria-label={`Edit ${label} filter`}>{label}</Button></SheetTrigger>)}</div>
+    <SheetContent side="right" className="w-[90vw] max-w-sm overflow-y-auto"><SheetHeader><SheetTitle>Filters</SheetTitle></SheetHeader><div className="mt-6"><FilterFields {...props}/></div></SheetContent>
+  </Sheet>;
   return (
     <>
       <div className="lg:hidden">

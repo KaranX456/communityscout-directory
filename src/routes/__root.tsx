@@ -97,6 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;700&family=Geist+Mono:wght@400&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -142,7 +143,7 @@ function RootComponent() {
       >
         Skip to content
       </a>
-      <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <div className="public-site flex min-h-screen flex-col bg-background text-foreground">
         <SiteHeader />
         <main id="main" className="flex-1">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}

@@ -17,15 +17,15 @@ export function AgeGate() {
   return (
     <AlertDialog.Root open={open}>
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm" />
+        <AlertDialog.Overlay className="fixed inset-0 z-50 bg-background/80" />
         <AlertDialog.Content
           onEscapeKeyDown={(e) => e.preventDefault()}
-          className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-card p-6 shadow-lift"
+          className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-input bg-card p-6"
         >
           <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <ShieldCheck className="h-5 w-5" aria-hidden="true" />
           </span>
-          <AlertDialog.Title className="text-lg font-semibold tracking-tight">
+          <AlertDialog.Title className="text-lg font-semibold ">
             Are you 18 or older?
           </AlertDialog.Title>
           <AlertDialog.Description className="mt-2 text-sm text-muted-foreground">

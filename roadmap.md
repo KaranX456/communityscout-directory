@@ -1,4 +1,4 @@
-- [ ] Audit public pages and states at 375/768/1280 in light/dark
-- [ ] Polish home, search, cards, filters and responsive chrome
-- [ ] Add branding assets and public route metadata
-- [ ] Polish legal pages, 404, accessibility and verify
+- [x] Apply Option C dark tokens and shared public chrome without affecting admin
+- [x] Apply approved home and search presentation with existing API helpers
+- [x] Run one home/search smoke test at 375px and 1280px; check automated build results
+- Deferred: previous broad audits, legal-copy and other polish tasks (outside current scope)
