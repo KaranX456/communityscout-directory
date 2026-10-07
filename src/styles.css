@@ -229,6 +229,7 @@ body:has(.public-site) {
   --destructive-foreground: #0B0B0C;
   --ring: #C8F031;
   --description: #A1A1A8;
+  --legal-body: #E4E4E7;
   --faint: #6B6B72;
   --adult: #F5C451;
   --adult-background: #2A2108;
@@ -272,3 +273,8 @@ body:has(.public-site) .report-link:hover { background: transparent; }
   .home-heading { font-size: 38px; }
   .public-footer { margin-top: 56px; }
 }
+
+body:has(.public-site) .public-legal { max-width: 680px; font-size: 17px; line-height: 1.65; color: var(--legal-body); }
+body:has(.public-site) .public-legal :is(p, ul, li, label) { font-size: 17px; color: var(--legal-body); }
+body:has(.public-site) .public-legal :is(h1, h2, h3, strong) { color: var(--foreground); }
+body:has(.public-site) .public-legal a { color: var(--primary); text-decoration: underline; overflow-wrap: anywhere; }

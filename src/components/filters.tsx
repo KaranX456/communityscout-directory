@@ -174,11 +174,11 @@ function FilterFields({
           <select
             id="f-sort"
             className={selectClass}
-            value={state.sort ?? "best"}
-            onChange={(e) => onChange({ sort: e.target.value === "members" ? "members" : undefined })}
+            value={state.sort ?? "members"}
+            onChange={(e) => onChange({ sort: e.target.value === "relevance" ? "relevance" : undefined })}
           >
-            <option value="best">Best match</option>
             <option value="members">Most members</option>
+            <option value="relevance">Best text match</option>
           </select>
         </div>
       ) : null}
@@ -194,7 +194,7 @@ export function FilterPanel(props: {
 }) {
   const [open, setOpen] = useState(false);
   if (props.compact) return <Sheet open={open} onOpenChange={setOpen}>
-    <div className="filter-pills flex gap-2 overflow-x-auto pb-2" aria-label="Search filters">{[`${formatMembers(props.state.min ?? 10000).replace("~", "")}+ members`, "Type", "Topic", "Language", "Sort", "More"].map((label, i) => <SheetTrigger asChild key={label}><Button variant="outline" className={`min-h-11 shrink-0 rounded-full px-4 text-sm ${i === 0 && (props.state.min ?? 10000) > 0 ? "border-primary text-primary" : "text-muted-foreground"}`} aria-label={`Edit ${label} filter`}>{label}</Button></SheetTrigger>)}</div>
+    <div className="filter-pills flex gap-2 overflow-x-auto pb-2" aria-label="Search filters">{[`${formatMembers(props.state.min ?? 10000).replace("~", "")}+ members`, "Type", "Topic", "Language", props.state.sort === "relevance" ? "Best text match" : "Most members", "More"].map((label, i) => <SheetTrigger asChild key={label}><Button variant="outline" className={`min-h-11 shrink-0 rounded-full px-4 text-sm ${i === 0 && (props.state.min ?? 10000) > 0 ? "border-primary text-primary" : "text-muted-foreground"}`} aria-label={`Edit ${label} filter`}>{label}</Button></SheetTrigger>)}</div>
     <SheetContent side="right" className="w-[90vw] max-w-sm overflow-y-auto"><SheetHeader><SheetTitle>Filters</SheetTitle></SheetHeader><div className="mt-6"><FilterFields {...props}/></div></SheetContent>
   </Sheet>;
   return (

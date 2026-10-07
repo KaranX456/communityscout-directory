@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { DraftBadge, Prose } from "@/components/notices";
+import { Prose } from "@/components/notices";
 import { PageShell } from "@/components/site-chrome";
 import { BRAND } from "@/lib/brand";
 
@@ -21,11 +21,8 @@ export const Route = createFileRoute("/terms")({
 
 function Terms() {
   return (
-    <PageShell className="max-w-2xl">
+    <PageShell className="public-legal">
       <h1 className="text-2xl font-semibold tracking-tight">Terms of Use</h1>
-      <div className="mt-3">
-        <DraftBadge />
-      </div>
       <div className="mt-6">
         <Prose>
           <h2>1. Adults only</h2>

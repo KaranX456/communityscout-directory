@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { DraftBadge } from "@/components/notices";
 import { PageShell } from "@/components/site-chrome";
 import { sendTakedown } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
@@ -37,11 +36,8 @@ function Takedown() {
   });
 
   return (
-    <PageShell className="max-w-2xl">
+    <PageShell className="public-legal">
       <h1 className="text-2xl font-semibold tracking-tight">Report or request removal</h1>
-      <div className="mt-3">
-        <DraftBadge />
-      </div>
       <p className="mt-4 text-sm text-muted-foreground">
         Tell us which listing should be removed and why. We review every request and remove
         illegal content immediately. Removing a listing here does not remove the community from

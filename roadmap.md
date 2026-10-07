@@ -1,6 +1,6 @@
 - [x] Apply Option C dark tokens and shared public chrome without affecting admin
 - [x] Apply approved home and search presentation with existing API helpers
 - [x] Run one home/search smoke test at 375px and 1280px; check automated build results
-- [ ] Correct default/relevance sorting and test URL/payload rules
-- [ ] Check remaining public routes at phone/desktop widths; fix dark readability and legal columns
+- [x] Correct default/relevance sorting and test URL/payload rules
+- [x] Check remaining public routes at phone/desktop widths; fix dark readability and legal columns
 - Deferred: previous broad audits and other polish tasks (outside current scope)
