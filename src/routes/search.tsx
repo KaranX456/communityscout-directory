@@ -1,11 +1,12 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { GatedContent } from "@/components/age-gate";
 import { FilterPanel } from "@/components/filters";
-import { CardSkeletons, EmptyResults, ErrorState, RelaxedBanner, SafetyNotice } from "@/components/notices";
+import { CardSkeletons, ErrorState, RelaxedBanner } from "@/components/notices";
 import { ResultCard } from "@/components/search-result";
 import { SearchBar } from "@/components/search-bar";
 import { search } from "@/lib/api";
@@ -73,6 +74,8 @@ function SearchPage() {
 
   const rows = query.data?.pages.flatMap((p) => p.results) ?? [];
   const meta = query.data?.pages[0]?.meta;
+  const discovered = meta && "discovered" in meta && typeof meta.discovered === "number" ? meta.discovered : 0;
+  const maximum = Math.max(0, ...rows.map(r => r.member_count ?? 0));
 
   const [loadMsg, setLoadMsg] = useState("");
   const prevCount = useRef(0);
@@ -105,57 +108,40 @@ function SearchPage() {
   const hasFilters = chips.length > 0;
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-6">
-      <h1 className="sr-only">
-        {q.trim() ? `Search results for “${q}”` : "Search communities"}
-      </h1>
-      <SearchBar
-        initialValue={q}
-        size="sm"
-        onSubmitQuery={(q) => navigate({ search: (prev) => ({ ...prev, q }) })}
-      />
-
-      <div className="mt-6 flex flex-col gap-4 lg:flex-row lg:gap-8">
-        <FilterPanel state={state} onChange={patch} />
-
-        <section className="min-w-0 flex-1 space-y-4" aria-label="Results">
-          <SafetyNotice />
-
-          {meta?.relaxed && meta.notice ? <RelaxedBanner notice={meta.notice} /> : null}
+    <div className="public-results mx-auto w-full max-w-[900px] px-4 py-6">
+      <SearchBar initialValue={q} size="sm" onSubmitQuery={(q) => navigate({ search: (prev) => ({ ...prev, q }) })}/>
+      <div className="mt-10 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
+        <h1 className="break-words text-[38px] font-bold leading-tight">{q.trim() || "Search communities"}</h1>
+        <p className="max-w-32 text-right text-sm text-muted-foreground sm:max-w-none" aria-live="polite" aria-atomic="true">{meta ? <><span className="font-mono">{meta.total.toLocaleString()}</span> communities · {state.sort === "members" ? "biggest first" : "best text match"}</> : null}</p>
+      </div>
+      <div className="mt-6"><FilterPanel state={state} onChange={patch} compact /></div>
+      <section className="mt-4 min-w-0" aria-label="Results">
+          {discovered > 0 ? <p role="status" className="mb-3 text-sm text-muted-foreground">Found <span className="font-mono">{discovered}</span> new communities for this search.</p> : null}
+          {meta?.notice ? <RelaxedBanner notice={meta.notice} /> : null}
 
           {hasFilters ? (
             <div className="flex flex-wrap items-center gap-2" aria-label="Active filters" role="group">
               {chips.map((c) => (
-                <button
+                <Button variant="outline"
                   key={c.key}
                   type="button"
                   onClick={() => patch(c.clear)}
                   aria-label={`Remove filter: ${c.label}`}
-                  className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 text-xs font-medium text-primary transition-colors hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-primary bg-transparent px-3 text-xs font-medium text-primary transition-colors hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {c.label}
                   <X className="h-3.5 w-3.5" aria-hidden="true" />
-                </button>
+                </Button>
               ))}
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={clearAll}
-                className="min-h-9 px-2 text-xs font-medium text-muted-foreground underline underline-offset-2 hover:text-foreground"
+                className="min-h-11 px-2 text-xs font-medium text-muted-foreground underline underline-offset-2 hover:text-foreground"
               >
                 Clear all
-              </button>
+              </Button>
             </div>
           ) : null}
-
-          <p className="min-h-4 text-xs text-muted-foreground" aria-live="polite" aria-atomic="true">
-            {meta ? (<>
-              ~{meta.total.toLocaleString()} results
-              {meta.latencyMs != null ? ` · ${(meta.latencyMs / 1000).toFixed(2)}s` : ""}
-              {meta.appliedMinMembers
-                ? ` · min ${meta.appliedMinMembers.toLocaleString()} members`
-                : ""}
-            </>) : null}
-          </p>
 
           <GatedContent>
             {!q.trim() ? (
@@ -163,31 +149,26 @@ function SearchPage() {
                 Type something above to start searching.
               </p>
             ) : query.isLoading ? (
-              <CardSkeletons />
+              <><div className="live-loading mb-3 flex items-center gap-3 rounded-2xl border border-input bg-card p-5 text-sm text-muted-foreground" role="status" aria-live="polite"><span className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-primary motion-reduce:animate-none" aria-hidden="true"/>Checking live sources… new topics can take a few seconds.</div><CardSkeletons count={3}/></>
             ) : query.isError ? (
               <ErrorState
                 message={(query.error as Error)?.message}
                 onRetry={() => query.refetch()}
               />
             ) : rows.length === 0 ? (
-              <EmptyResults
-                indexEmpty={!hasFilters && meta?.relaxed === true && (meta?.appliedMinMembers ?? 1) === 0}
-                hasFilters={hasFilters}
-                {...(minMembers > 0 ? { onLowerMin: () => patch({ min: 0 }) } : {})}
-                onClearFilters={clearAll}
-              />
+              <div className="py-12"><h2 className="font-bold">No communities found for “{q}”.</h2><div className="mt-4 flex flex-wrap gap-4"><Button variant="link" className="min-h-11 px-0" onClick={() => patch({ min: 0 })}>Lower the minimum</Button><Button variant="link" className="min-h-11 px-0" onClick={clearAll}>Clear filters</Button><Button asChild variant="link" className="min-h-11 px-0"><Link to="/submit">Submit a community</Link></Button></div></div>
             ) : (
               <>
-                <ul className="space-y-3">
-                  {rows.map((row) => (
+                <ul>
+                  {rows.map((row, index) => (
                     <li key={row.id}>
-                      <ResultCard row={row} query={q} />
+                      <ResultCard row={row} query={q} maximum={maximum} first={index === 0} />
                     </li>
                   ))}
                 </ul>
                 {query.hasNextPage ? (
                   <div className="pt-4 text-center">
-                    <button
+                    <Button variant="outline"
                       type="button"
                       onClick={loadMore}
                       disabled={query.isFetchingNextPage}
@@ -202,7 +183,7 @@ function SearchPage() {
                       ) : (
                         "Load more"
                       )}
-                    </button>
+                    </Button>
                   </div>
                 ) : (
                   <p className="pt-4 text-center text-xs text-muted-foreground">
@@ -214,7 +195,6 @@ function SearchPage() {
             <p className="sr-only" aria-live="polite">{loadMsg}</p>
           </GatedContent>
         </section>
-      </div>
     </div>
   );
 }

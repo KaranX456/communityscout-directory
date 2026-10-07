@@ -22,9 +22,8 @@ export function RelaxedBanner({ notice }: { notice: string }) {
   return (
     <div
       role="status"
-      className="flex gap-2.5 rounded-xl border border-primary/25 border-l-4 border-l-primary bg-primary/5 p-3 text-sm text-foreground"
+      className="mb-3 text-sm text-muted-foreground"
     >
-      <Info className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
       <p>
         <span className="sr-only">Note: </span>
         {notice}
@@ -108,38 +107,9 @@ export function ErrorState({
   );
 }
 
-export function CardSkeletons({ count = 5 }: { count?: number }) {
+export function CardSkeletons({ count = 3 }: { count?: number }) {
   const bar = "animate-pulse rounded bg-muted motion-reduce:animate-none";
-  return (
-    <div className="space-y-3" aria-hidden="true">
-      {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="rounded-2xl border border-border bg-card p-4 shadow-card">
-          <div className="flex gap-3">
-            <div className={`h-12 w-12 shrink-0 rounded-xl ${bar}`} />
-            <div className="min-w-0 flex-1">
-              <div className={`h-5 w-2/5 ${bar}`} />
-              <div className={`mt-1 h-4 w-1/4 ${bar}`} />
-              <div className="mt-2 flex gap-1.5">
-                <div className={`h-5 w-16 rounded-full ${bar}`} />
-                <div className={`h-5 w-20 rounded-full ${bar}`} />
-                <div className={`h-5 w-14 rounded-full ${bar}`} />
-              </div>
-              <div className="mt-2 space-y-1.5">
-                <div className={`h-3.5 w-full ${bar}`} />
-                <div className={`h-3.5 w-11/12 ${bar}`} />
-                <div className={`h-3.5 w-3/5 ${bar}`} />
-              </div>
-              <div className={`mt-3 h-4 w-1/2 ${bar}`} />
-              <div className="mt-4 flex gap-2">
-                <div className={`h-11 w-40 rounded-xl ${bar}`} />
-                <div className={`h-11 w-28 rounded-xl ${bar}`} />
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  return <div aria-hidden="true">{Array.from({ length: count }).map((_, i) => <div key={i} className="grid min-h-[175px] grid-cols-[minmax(0,1fr)_96px] gap-4 border-b border-border py-[19px] sm:grid-cols-[minmax(0,1fr)_150px] sm:gap-8"><div><div className={`h-6 w-3/4 ${bar}`}/><div className={`mt-3 h-4 w-2/3 ${bar}`}/><div className={`mt-4 h-4 w-full ${bar}`}/><div className={`mt-2 h-4 w-4/5 ${bar}`}/><div className={`mt-4 h-4 w-12 ${bar}`}/></div><div><div className={`ml-auto h-7 w-20 ${bar}`}/><div className={`mt-3 h-3 w-full ${bar}`}/><div className={`mt-3 h-1 w-full ${bar}`}/><div className={`ml-auto mt-5 h-4 w-14 ${bar}`}/></div></div>)}</div>;
 }
 
 export function Prose({ children }: { children: ReactNode }) {
