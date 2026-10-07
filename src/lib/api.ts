@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "./supabase";
+import { withSearchSort } from "./search-params";
 
 export type Row = {
   id: string;
@@ -38,7 +39,7 @@ export type SearchParamsBody = {
   language?: string | undefined;
   country?: string | undefined;
   showAdult?: boolean | undefined;
-  sort?: "best" | "members" | undefined;
+  sort?: "relevance" | undefined;
   limit?: number | undefined;
   offset?: number | undefined;
 };
@@ -66,7 +67,7 @@ function unwrap<T>(data: unknown, error: unknown): T {
 }
 
 export async function search(body: SearchParamsBody) {
-  const { data, error } = await supabase.functions.invoke("search", { body });
+  const { data, error } = await supabase.functions.invoke("search", { body: withSearchSort(body) });
   // Rate limits & function errors surface with a useful message when available.
   if (error) {
     const ctx = (error as { context?: Response }).context;

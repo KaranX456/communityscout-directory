@@ -60,7 +60,7 @@ function SearchPage() {
         language: state.lang,
         country: state.country,
         showAdult: Boolean(state.adult),
-        sort: state.sort === "members" ? "members" : "best",
+        sort: state.sort,
         limit: PAGE_SIZE,
         offset: pageParam,
       }),
@@ -102,7 +102,7 @@ function SearchPage() {
   if (state.lang) chips.push({ key: "lang", label: languageName(state.lang), clear: { lang: undefined } });
   if (state.country) chips.push({ key: "country", label: countryName(state.country), clear: { country: undefined } });
   if (state.adult) chips.push({ key: "adult", label: "Adult shown", clear: { adult: undefined } });
-  if (state.sort === "members") chips.push({ key: "sort", label: "Most members", clear: { sort: undefined } });
+  if (state.sort === "relevance") chips.push({ key: "sort", label: "Best text match", clear: { sort: undefined } });
   const clearAll = () =>
     patch({ min: undefined, kind: undefined, cat: undefined, lang: undefined, country: undefined, adult: undefined, sort: undefined });
   const hasFilters = chips.length > 0;
@@ -112,7 +112,7 @@ function SearchPage() {
       <SearchBar initialValue={q} size="sm" onSubmitQuery={(q) => navigate({ search: (prev) => ({ ...prev, q }) })}/>
       <div className="mt-10 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
         <h1 className="break-words text-[38px] font-bold leading-tight">{q.trim() || "Search communities"}</h1>
-        <p className="max-w-32 text-right text-sm text-muted-foreground sm:max-w-none" aria-live="polite" aria-atomic="true">{meta ? <><span className="font-mono">{meta.total.toLocaleString()}</span> communities · {state.sort === "members" ? "biggest first" : "best text match"}</> : null}</p>
+        <p className="max-w-32 text-right text-sm text-muted-foreground sm:max-w-none" aria-live="polite" aria-atomic="true">{meta ? <><span className="font-mono">{meta.total.toLocaleString()}</span> communities · {state.sort === "relevance" ? "best text match" : "biggest first"}</> : null}</p>
       </div>
       <div className="mt-6"><FilterPanel state={state} onChange={patch} compact /></div>
       <section className="mt-4 min-w-0" aria-label="Results">

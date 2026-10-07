@@ -11,3 +11,5 @@
 
 - Scope public theme variables through `body:has(.public-site)` so public portals inherit the theme without changing admin appearance.
 - Reuse the presentation-only member-bar helper for logarithmic size comparisons; keep API helpers and URL-state logic unchanged during design work.
+
+- Normalize search sort in the shared URL-state helper and strip non-relevance sort values before invoking search, so default requests follow the backend member-order contract.

@@ -6,7 +6,7 @@ export type SearchState = {
   lang?: string | undefined;
   country?: string | undefined;
   adult?: boolean | undefined;
-  sort?: string | undefined;
+  sort?: "relevance" | undefined;
 };
 
 export const DEFAULT_MIN = 10000;
@@ -39,6 +39,11 @@ export function validateSearchState(raw: Record<string, unknown>): SearchState {
     lang: str(raw["lang"]),
     country: str(raw["country"]),
     adult: adult === true || adult === "true" ? true : undefined,
-    sort: raw["sort"] === "members" ? "members" : undefined,
+    sort: raw["sort"] === "relevance" ? "relevance" : undefined,
   };
+}
+
+export function withSearchSort<T extends { sort?: string | undefined }>(body: T) {
+  const { sort, ...rest } = body;
+  return sort === "relevance" ? { ...rest, sort: "relevance" as const } : rest;
 }
