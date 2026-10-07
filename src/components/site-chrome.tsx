@@ -1,81 +1,37 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Menu } from "lucide-react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import type { ReactNode } from "react";
-
-import { ThemeToggle } from "@/components/theme";
+import { facetsQuery } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  return (
-    <header className="sticky top-0 z-30 w-full border-b border-border bg-background/95 backdrop-blur">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-3 px-4">
-        <Link to="/" className="flex min-w-0 items-center gap-2 font-semibold" aria-label={`${BRAND.name} home`}>
-          <img src="/logo-mark.svg" alt="" width="36" height="36" className="h-9 w-9 shrink-0" />
-          <span className="truncate">{BRAND.name}</span>
-        </Link>
-        <nav aria-label="Main" className="ml-auto hidden items-center gap-1 text-sm sm:flex">
-          <HeaderLink to="/category">Categories</HeaderLink>
-          <HeaderLink to="/submit">Submit</HeaderLink>
-          <HeaderLink to="/about">About</HeaderLink>
-        </nav>
-        <div className="ml-auto flex items-center gap-1 sm:ml-0">
-          <ThemeToggle />
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild><Button variant="ghost" size="icon" className="min-h-11 min-w-11 sm:hidden" aria-label="Open menu"><Menu /></Button></SheetTrigger>
-            <SheetContent side="right" className="w-72 p-6">
-              <SheetTitle className="text-left">Menu</SheetTitle>
-              <nav aria-label="Mobile" className="mt-8 flex flex-col gap-2" onClick={() => setOpen(false)}>
-                <HeaderLink to="/category">Categories</HeaderLink>
-                <HeaderLink to="/submit">Submit</HeaderLink>
-                <HeaderLink to="/about">About</HeaderLink>
-              </nav>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </div>
-    </header>
-  );
+  const home = useRouterState({ select: s => s.location.pathname === "/" });
+  return <header className={`public-header ${home ? "public-header-home" : ""}`}>
+    <div className="mx-auto grid h-[76px] max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4">
+      <Link to="/" className="flex min-w-0 items-center gap-3 font-bold" aria-label={`${BRAND.name} home`}>
+        <svg viewBox="0 0 36 36" className="public-logo h-9 w-9 shrink-0" aria-hidden="true"><rect width="36" height="36" rx="9"/><path d="M9 11h18v3H9zm0 6h13v3H9zm0 6h8v3H9z"/></svg>
+        <span className="truncate">{BRAND.name}</span>
+      </Link>
+      <nav aria-label="Main" className="hidden items-center gap-5 sm:flex"><HeaderLink to="/category">Browse</HeaderLink><HeaderLink to="/submit">Submit a link</HeaderLink><HeaderLink to="/about">About</HeaderLink></nav>
+      <Sheet open={open} onOpenChange={setOpen}><SheetTrigger asChild><Button variant="ghost" size="icon" className="min-h-11 min-w-11 sm:hidden" aria-label="Open menu"><Menu /></Button></SheetTrigger><SheetContent className="w-72"><SheetTitle>Menu</SheetTitle><nav aria-label="Mobile" className="mt-8 flex flex-col" onClick={() => setOpen(false)}><HeaderLink to="/category">Browse</HeaderLink><HeaderLink to="/submit">Submit a link</HeaderLink><HeaderLink to="/about">About</HeaderLink></nav></SheetContent></Sheet>
+    </div>
+  </header>;
 }
-
 function HeaderLink({ to, children }: { to: string; children: ReactNode }) {
-  return (
-    <Link
-      to={to}
-      activeProps={{ className: "text-foreground font-medium" }}
-      className="inline-flex min-h-11 items-center rounded-md px-3 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-    >
-      {children}
-    </Link>
-  );
+  return <Link to={to} className="inline-flex min-h-11 items-center text-sm text-muted-foreground transition-colors hover:text-foreground">{children}</Link>;
 }
-
 export function SiteFooter() {
-  return (
-    <footer className="mt-16 border-t border-border bg-muted/30">
-      <div className="mx-auto w-full max-w-6xl px-4 py-9 text-sm">
-        <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-2">
-          {([['About','/about'], ['Categories','/category'], ['Terms','/terms'], ['Privacy','/privacy'], ['Takedown','/takedown'], ['Submit','/submit']] as [string, string][]).map(([label,to]) =>
-            <Link key={to} to={to} className="inline-flex min-h-11 items-center text-muted-foreground hover:text-foreground">{label}</Link>
-          )}
-        </nav>
-        <a href={`mailto:${BRAND.contactEmail}`} className="mt-4 inline-block break-all text-primary underline underline-offset-2">{BRAND.contactEmail}</a>
-        <p className="mt-4 text-muted-foreground">{BRAND.disclaimer}</p>
-        <p className="mt-1 text-muted-foreground">&copy; {new Date().getFullYear()} {BRAND.name}. For adults 18+.</p>
-      </div>
-    </footer>
-  );
+  const facets = useQuery(facetsQuery);
+  const total = facets.data?.total ?? 0;
+  return <footer className="public-footer mt-20 border-t border-border"><div className="mx-auto flex max-w-6xl flex-col justify-between gap-2 px-4 py-5 text-[13px] text-muted-foreground sm:flex-row sm:items-center">
+    <p>{total > 0 ? <><span className="font-mono">{total.toLocaleString()}</span> public communities · </> : null}member counts come from Telegram</p>
+    <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-5"><Link to="/terms">Terms</Link><Link to="/privacy">Privacy</Link><Link to="/takedown">Takedown</Link><span>Not affiliated with Telegram</span></nav>
+  </div></footer>;
 }
-
-export function PageShell({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function PageShell({ children, className = "" }: { children: ReactNode; className?: string }) {
   return <div className={`mx-auto w-full max-w-6xl px-4 py-8 ${className}`}>{children}</div>;
 }
