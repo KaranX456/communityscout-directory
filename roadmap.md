@@ -1,4 +1,4 @@
-- [ ] Apply Option C dark tokens and shared public chrome without affecting admin
-- [ ] Apply approved home and search presentation with existing API helpers
-- [ ] Run one home/search smoke test at 375px and 1280px; check automated build results
+- [x] Apply Option C dark tokens and shared public chrome without affecting admin
+- [x] Apply approved home and search presentation with existing API helpers
+- [x] Run one home/search smoke test at 375px and 1280px; check automated build results
 - Deferred: previous broad audits, legal-copy and other polish tasks (outside current scope)
