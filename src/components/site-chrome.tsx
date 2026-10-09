@@ -29,7 +29,7 @@ export function SiteFooter() {
   const total = facets.data?.total ?? 0;
   return <footer className="public-footer mt-20 border-t border-border"><div className="mx-auto flex max-w-6xl flex-col justify-between gap-2 px-4 py-5 text-[13px] text-muted-foreground sm:flex-row sm:items-center">
     <p>{total > 0 ? <><span className="font-mono">{total.toLocaleString()}</span> public communities · </> : null}member counts come from Telegram</p>
-    <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-5"><Link to="/terms">Terms</Link><Link to="/privacy">Privacy</Link><Link to="/takedown">Takedown</Link><span>Not affiliated with Telegram</span></nav>
+    <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-5"><Link to="/terms">Terms</Link><Link to="/privacy">Privacy</Link><Link to="/takedown">Takedown</Link><a href="https://www.tgatlas.org/data" target="_blank" rel="noopener noreferrer nofollow">Channel metadata from tgAtlas</a><span>Not affiliated with Telegram</span></nav>
   </div></footer>;
 }
 export function PageShell({ children, className = "" }: { children: ReactNode; className?: string }) {
