@@ -51,6 +51,10 @@ function CommunitiesPage() {
 
   const quick = useAdminMutation(
     async ({ c, status }: { c: Community; status: string }) => {
+      if (status === "removed") {
+        check(await supabase.rpc("remove_community", { p_handle: c.username, p_reason: "removed by admin" }));
+        return;
+      }
       check(await supabase.from("communities").update({ status }).eq("id", c.id));
     },
     ({ c, status }) => `@${c.username} → ${status}`,
@@ -166,7 +170,12 @@ function EditDialog({ community, onClose }: { community: Community | null; onClo
         patch["member_count_updated_at"] = new Date().toISOString();
         patch["member_count_source"] = "admin";
       }
+      const removing = v.status === "removed" && c.status !== "removed";
+      if (removing) delete patch["status"];
       check(await supabase.from("communities").update(patch).eq("id", c.id));
+      if (removing) {
+        check(await supabase.rpc("remove_community", { p_handle: c.username, p_reason: v.status_reason.trim() || "removed by admin" }));
+      }
       // Re-read: the safety trigger may have changed status/flags.
       const after = check(await supabase.from("communities").select("status,status_reason,scam_flag").eq("id", c.id).maybeSingle()) as Pick<Community, "status" | "status_reason" | "scam_flag"> | null;
       return { requested: v, after };

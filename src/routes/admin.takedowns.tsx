@@ -46,13 +46,12 @@ function TakedownsPage() {
     async (t: Takedown) => {
       const u = parseUsername(t.target);
       if (!u) return { found: false as const, u: null };
-      const rows = (check(await supabase.from("communities").update({ status: "removed", status_reason: "takedown request" }).eq("username", u).select("id")) ?? []) as { id: string }[];
-      return { found: rows.length > 0, u };
+      check(await supabase.rpc("remove_community", { p_handle: u, p_reason: "takedown request" }));
+      return { found: true as const, u };
     },
     (_t, r) => {
       if (!r.u) { toast.error("Couldn't find a Telegram username in this request."); return null; }
-      if (!r.found) { toast.error(`No community @${r.u} in the directory.`); return null; }
-      return `@${r.u} removed from the directory`;
+      return `@${r.u} removed and permanently blocked from the directory`;
     },
   );
 
