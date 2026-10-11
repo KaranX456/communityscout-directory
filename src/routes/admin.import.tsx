@@ -30,7 +30,9 @@ type Parsed = {
   record: Record<string, unknown> | null;
 };
 
-type Report = { inserted: number; updated: number; skipped: { line: number; reason: string }[]; autoBlocked: number; autoFlagged: number; failed: string[] };
+type Report = { inserted: number; updated: number; skipped: { line: number; reason: string }[]; skippedByServer: number; failed: string[] };
+type ImportResult = { run_id: string; added: number; updated: number; skipped: number; errors: number };
+type Source = { slug: string; name: string; permitted: string[] | null };
 
 function bool(v: string | undefined) {
   return /^(1|true|yes|y)$/i.test((v ?? "").trim());
@@ -38,10 +40,15 @@ function bool(v: string | undefined) {
 
 function ImportPage() {
   const cats = useQuery(categoriesQuery);
+  const sources = useQuery({
+    queryKey: ["admin", "sources", "approved"],
+    queryFn: async () =>
+      (check(await supabase.from("sources").select("slug,name,permitted").eq("review_status", "approved").order("name")) ?? []) as Source[],
+  });
   const qc = useQueryClient();
   const [rows, setRows] = useState<Record<string, string>[]>([]);
   const [fileName, setFileName] = useState("");
-  const [status, setStatus] = useState<"pending" | "active">("pending");
+  const [sourceSlug, setSourceSlug] = useState("");
   const [busy, setBusy] = useState(false);
   const [report, setReport] = useState<Report | null>(null);
 
@@ -119,40 +126,47 @@ function ImportPage() {
   }
 
   async function runImport() {
-    if (!valid.length) return;
+    if (!valid.length || !sourceSlug) return;
     setBusy(true);
     const rep: Report = {
       inserted: 0,
       updated: 0,
       skipped: parsed.filter((p) => !p.record).map((p) => ({ line: p.line, reason: p.errors.join("; ") })),
-      autoBlocked: 0,
-      autoFlagged: 0,
+      skippedByServer: 0,
       failed: [],
     };
-    const now = new Date().toISOString();
     try {
       for (let i = 0; i < valid.length; i += CHUNK) {
         const chunk = valid.slice(i, i + CHUNK);
-        const names = chunk.map((p) => p.username);
+        const range = `Rows ${chunk[0]!.line}–${chunk[chunk.length - 1]!.line}`;
         try {
-          const existing = (check(await supabase.from("communities").select("username").in("username", names)) ?? []) as { username: string }[];
-          const existingSet = new Set(existing.map((e) => e.username));
-          const payload = chunk.map((p) => ({
-            ...p.record,
-            status,
-            source: "import",
-            member_count_updated_at: now,
-            member_count_source: "import",
-            count_confidence: 0.6,
-          }));
-          check(await supabase.from("communities").upsert(payload, { onConflict: "username" }));
-          rep.updated += names.filter((n) => existingSet.has(n)).length;
-          rep.inserted += names.filter((n) => !existingSet.has(n)).length;
-          const after = (check(await supabase.from("communities").select("username,status,scam_flag").in("username", names)) ?? []) as { status: string; scam_flag: boolean | null }[];
-          rep.autoBlocked += after.filter((r) => r.status === "blocked").length;
-          rep.autoFlagged += after.filter((r) => r.scam_flag).length;
+          const { data, error } = await supabase.rpc("import_batch", {
+            p_source: sourceSlug,
+            p_rows: chunk.map((p) => {
+              const r = p.record!;
+              return {
+                handle: p.username,
+                title: r["title"],
+                description: r["description"],
+                kind: r["kind"],
+                category: r["category"],
+                language: r["language"],
+                country: r["country"],
+                members: r["member_count"],
+                adult: r["adult"],
+              };
+            }),
+          });
+          if (error) {
+            rep.failed.push(`${range}: ${error.message}`);
+            continue;
+          }
+          const res = (data ?? {}) as Partial<ImportResult>;
+          rep.inserted += Number(res.added ?? 0);
+          rep.updated += Number(res.updated ?? 0);
+          rep.skippedByServer += Number(res.skipped ?? 0) + Number(res.errors ?? 0);
         } catch (err) {
-          rep.failed.push(`Rows ${chunk[0]!.line}–${chunk[chunk.length - 1]!.line}: ${errMsg(err)}`);
+          rep.failed.push(`${range}: ${errMsg(err)}`);
         }
       }
       setReport(rep);
@@ -164,6 +178,8 @@ function ImportPage() {
     }
   }
 
+  const selectedSource = (sources.data ?? []).find((s) => s.slug === sourceSlug);
+
   return (
     <>
       <PageHeader
@@ -172,29 +188,39 @@ function ImportPage() {
         actions={<Button variant="outline" onClick={downloadTemplate}>Download template</Button>}
       />
       <Panel>
-        <div className="flex flex-wrap items-end gap-4 p-4">
+        <div className="space-y-4 p-4">
           <div className="space-y-1.5">
-            <Label htmlFor="csv">CSV file</Label>
-            <input id="csv" type="file" accept=".csv,text/csv" onChange={onFile} className="block text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-primary-foreground" />
-          </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="imp-status">Import as status</Label>
-            <Select value={status} onValueChange={(v) => setStatus(v === "active" ? "active" : "pending")}>
-              <SelectTrigger id="imp-status" className="w-36"><SelectValue /></SelectTrigger>
+            <Label htmlFor="imp-source">Source *</Label>
+            <Select value={sourceSlug} onValueChange={setSourceSlug}>
+              <SelectTrigger id="imp-source" className="w-64"><SelectValue placeholder={sources.isLoading ? "Loading sources…" : "Choose a source"} /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="pending">pending</SelectItem>
-                <SelectItem value="active">active</SelectItem>
+                {(sources.data ?? []).map((s) => (
+                  <SelectItem key={s.slug} value={s.slug}>{s.name}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
+            {sources.error ? <p className="text-sm text-destructive">{errMsg(sources.error)}</p> : null}
+            {selectedSource ? (
+              <p className="text-sm text-muted-foreground">
+                This source may supply: {(selectedSource.permitted ?? []).join(", ")}. Other columns in the CSV are ignored.
+              </p>
+            ) : null}
           </div>
-          <Button onClick={() => void runImport()} disabled={busy || !valid.length}>
-            {busy ? "Importing…" : `Import ${valid.length} valid row${valid.length === 1 ? "" : "s"}`}
-          </Button>
-          {rows.length ? (
-            <p className="text-sm text-muted-foreground">
-              {fileName}: {valid.length} valid, {parsed.length - valid.length} with errors
-            </p>
-          ) : null}
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="csv">CSV file</Label>
+              <input id="csv" type="file" accept=".csv,text/csv" onChange={onFile} className="block text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-primary-foreground" />
+            </div>
+            <Button onClick={() => void runImport()} disabled={busy || !valid.length || !sourceSlug}>
+              {busy ? "Importing…" : `Import ${valid.length} valid row${valid.length === 1 ? "" : "s"}`}
+            </Button>
+            {rows.length ? (
+              <p className="text-sm text-muted-foreground">
+                {fileName}: {valid.length} valid, {parsed.length - valid.length} with errors
+              </p>
+            ) : null}
+          </div>
+          <p className="text-sm text-muted-foreground">Imported rows are added as pending and appear after review.</p>
         </div>
       </Panel>
 
@@ -202,8 +228,9 @@ function ImportPage() {
         <div className="mt-6">
           <Panel title="Import report">
             <div className="space-y-2 p-4 text-sm" role="status">
-              <p><strong>{report.inserted}</strong> inserted · <strong>{report.updated}</strong> updated · <strong>{report.skipped.length}</strong> skipped</p>
-              <p>Safety check: <strong>{report.autoBlocked}</strong> auto-blocked, <strong>{report.autoFlagged}</strong> scam-flagged.</p>
+              <p>
+                <strong>{report.inserted}</strong> added · <strong>{report.updated}</strong> updated · <strong>{report.skipped.length}</strong> skipped locally · <strong>{report.skippedByServer}</strong> skipped or rejected by the server (removed handles, unpermitted fields, bad rows)
+              </p>
               {report.failed.map((f) => <p key={f} className="text-destructive">{f}</p>)}
               {report.skipped.length ? (
                 <ul className="list-disc pl-5 text-muted-foreground">
