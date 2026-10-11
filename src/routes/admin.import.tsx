@@ -31,8 +31,10 @@ type Parsed = {
 };
 
 type Report = { inserted: number; updated: number; skipped: { line: number; reason: string }[]; skippedByServer: number; failed: string[] };
-type ImportResult = { run_id: string; added: number; updated: number; skipped: number; errors: number };
+type ImportResult = { run_id: string; added: number; updated: number; skipped: number | unknown[]; errors: number | unknown[] };
 type Source = { slug: string; name: string; permitted: string[] | null };
+
+const count = (v: unknown) => (Array.isArray(v) ? v.length : Number(v ?? 0) || 0);
 
 function bool(v: string | undefined) {
   return /^(1|true|yes|y)$/i.test((v ?? "").trim());
@@ -164,7 +166,7 @@ function ImportPage() {
           const res = (data ?? {}) as Partial<ImportResult>;
           rep.inserted += Number(res.added ?? 0);
           rep.updated += Number(res.updated ?? 0);
-          rep.skippedByServer += Number(res.skipped ?? 0) + Number(res.errors ?? 0);
+          rep.skippedByServer += count(res.skipped) + count(res.errors);
         } catch (err) {
           rep.failed.push(`${range}: ${errMsg(err)}`);
         }
