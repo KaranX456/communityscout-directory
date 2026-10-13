@@ -22,6 +22,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminBlocklistRouteImport } from './routes/admin.blocklist'
 import { Route as AdminCommunitiesRouteImport } from './routes/admin.communities'
 import { Route as AdminImportRouteImport } from './routes/admin.import'
+import { Route as AdminReviewRouteImport } from './routes/admin.review'
 import { Route as AdminSubmissionsRouteImport } from './routes/admin.submissions'
 import { Route as AdminTakedownsRouteImport } from './routes/admin.takedowns'
 import { Route as AdminLoginRouteImport } from './routes/admin_.login'
@@ -93,6 +94,11 @@ const AdminImportRoute = AdminImportRouteImport.update({
   path: '/import',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminReviewRoute = AdminReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSubmissionsRoute = AdminSubmissionsRouteImport.update({
   id: '/submissions',
   path: '/submissions',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/admin/blocklist': typeof AdminBlocklistRoute
   '/admin/communities': typeof AdminCommunitiesRoute
   '/admin/import': typeof AdminImportRoute
+  '/admin/review': typeof AdminReviewRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/takedowns': typeof AdminTakedownsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/admin/blocklist': typeof AdminBlocklistRoute
   '/admin/communities': typeof AdminCommunitiesRoute
   '/admin/import': typeof AdminImportRoute
+  '/admin/review': typeof AdminReviewRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/takedowns': typeof AdminTakedownsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/admin/blocklist': typeof AdminBlocklistRoute
   '/admin/communities': typeof AdminCommunitiesRoute
   '/admin/import': typeof AdminImportRoute
+  '/admin/review': typeof AdminReviewRoute
   '/admin/submissions': typeof AdminSubmissionsRoute
   '/admin/takedowns': typeof AdminTakedownsRoute
   '/admin_/login': typeof AdminLoginRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/admin/blocklist'
     | '/admin/communities'
     | '/admin/import'
+    | '/admin/review'
     | '/admin/submissions'
     | '/admin/takedowns'
     | '/admin/login'
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/admin/blocklist'
     | '/admin/communities'
     | '/admin/import'
+    | '/admin/review'
     | '/admin/submissions'
     | '/admin/takedowns'
     | '/admin/login'
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/admin/blocklist'
     | '/admin/communities'
     | '/admin/import'
+    | '/admin/review'
     | '/admin/submissions'
     | '/admin/takedowns'
     | '/admin_/login'
@@ -349,6 +361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminImportRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/review': {
+      id: '/admin/review'
+      path: '/review'
+      fullPath: '/admin/review'
+      preLoaderRoute: typeof AdminReviewRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/submissions': {
       id: '/admin/submissions'
       path: '/submissions'
@@ -391,6 +410,7 @@ interface AdminRouteChildren {
   AdminBlocklistRoute: typeof AdminBlocklistRoute
   AdminCommunitiesRoute: typeof AdminCommunitiesRoute
   AdminImportRoute: typeof AdminImportRoute
+  AdminReviewRoute: typeof AdminReviewRoute
   AdminSubmissionsRoute: typeof AdminSubmissionsRoute
   AdminTakedownsRoute: typeof AdminTakedownsRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -400,6 +420,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBlocklistRoute: AdminBlocklistRoute,
   AdminCommunitiesRoute: AdminCommunitiesRoute,
   AdminImportRoute: AdminImportRoute,
+  AdminReviewRoute: AdminReviewRoute,
   AdminSubmissionsRoute: AdminSubmissionsRoute,
   AdminTakedownsRoute: AdminTakedownsRoute,
   AdminIndexRoute: AdminIndexRoute,
