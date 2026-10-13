@@ -1,120 +1,41 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-
+import { AlertTriangle, ArrowRight } from "lucide-react";
 import { DataState, PageHeader, Panel, StatusPill } from "@/components/admin/shell";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { check, fmtDate, pct, useAdminMutation, type Dashboard } from "@/lib/admin";
+import { check, pct, useAdminMutation } from "@/lib/admin";
+import { dashboardQuery, pendingSourcesQuery } from "@/lib/admin-review";
+import { feedbackCounts } from "@/lib/admin-rules";
 import { formatMembers } from "@/lib/format";
 import { supabase } from "@/lib/supabase";
-
 export const Route = createFileRoute("/admin/")({
-  head: () => ({ meta: [{ title: "Dashboard — CommunityScout Admin" }] }),
-  component: DashboardPage,
+  head: () => ({ meta: [{ title: "Dashboard — Community Scout Admin" }, { name: "description", content: "Directory review, search health and visitor feedback for Community Scout staff." }, { property: "og:title", content: "Dashboard — Community Scout Admin" }, { property: "og:description", content: "Community Scout directory administration." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }), component: DashboardPage,
 });
-
 type ZeroRow = { normalized_query: string; searches: number; last_seen: string };
-type Flagged = {
-  id: string;
-  username: string;
-  title: string;
-  status: string;
-  member_count: number | null;
-  spam_reports: number;
-  incorrect_reports: number;
-  not_relevant_reports: number;
-  relevant_reports: number;
-};
-
+type Flagged = { id: string; username: string; title: string; status: string; member_count: number | null; spam_reports: number; incorrect_reports: number; not_relevant_reports: number; relevant_reports: number };
 function DashboardPage() {
-  const dash = useQuery({
-    queryKey: ["admin", "dashboard"],
-    queryFn: async () => check(await supabase.rpc("admin_dashboard")) as Dashboard,
-  });
-  const zero = useQuery({
-    queryKey: ["admin", "zero"],
-    queryFn: async () => (check(await supabase.rpc("admin_zero_result_queries", { p_days: 7, p_limit: 25 })) ?? []) as ZeroRow[],
-  });
-  const flagged = useQuery({
-    queryKey: ["admin", "flagged"],
-    queryFn: async () => (check(await supabase.rpc("admin_flagged_communities", { p_limit: 50 })) ?? []) as Flagged[],
-  });
-  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
-
-  const act = useAdminMutation(
-    async ({ id, action }: { id: string; action: "block" | "scam"; username: string }) => {
-      const patch = action === "block" ? { status: "blocked", status_reason: "user reports" } : { scam_flag: true };
-      check(await supabase.from("communities").update(patch).eq("id", id));
-    },
-    (v) => (v.action === "block" ? `@${v.username} blocked` : `@${v.username} marked as scam`),
-  );
-
-  const d = dash.data;
-  const fb = d?.feedback_7d;
-  const stats: [string, string | number][] = d
-    ? [
-        ["Active communities", d.active_communities],
-        ["Pending communities", d.pending_communities],
-        ["Blocked", d.blocked_communities],
-        ["Scam flagged", d.scam_flagged],
-        ["Pending submissions", d.pending_submissions],
-        ["Open takedowns", d.open_takedowns],
-        ["Searches (7d)", d.searches_7d],
-        ["Zero-result rate (7d)", pct(d.zero_result_rate_7d)],
-        ["Relaxed rate (7d)", pct(d.relaxed_rate_7d)],
-        ["Avg latency (7d)", d.avg_latency_ms_7d == null ? "—" : `${Math.round(d.avg_latency_ms_7d)} ms`],
-        ["Feedback: relevant / not", fb ? `${fb.relevant} / ${fb.not_relevant}` : "—"],
-        ["Feedback: incorrect / spam", fb ? `${fb.incorrect} / ${fb.spam_scam}` : "—"],
-      ]
-    : [];
-
-  const flaggedRows = (flagged.data ?? []).filter((r) => !dismissed.has(r.id));
-
-  return (
-    <>
-      <PageHeader title="Dashboard" description="Health of the directory over the last 7 days." />
-      {dash.error ? (
-        <Panel>
-          <DataState isLoading={false} error={dash.error} onRetry={() => void dash.refetch()} isEmpty={false} empty="">
-            {null}
-          </DataState>
-        </Panel>
-      ) : (
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
-          {dash.isLoading
-            ? Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />)
-            : stats.map(([label, value]) => (
-                <div key={label} className="rounded-xl border border-border bg-card p-4 shadow-sm">
-                  <p className="text-xs text-muted-foreground">{label}</p>
-                  <p className="mt-1 text-2xl font-semibold tabular-nums">{value}</p>
-                </div>
-              ))}
-        </div>
-      )}
-
-      <div className="mt-6 grid gap-6">
-        <Panel title="Top zero-result searches (7 days)" hint="Good candidates for new communities.">
-          <DataState isLoading={zero.isLoading} error={zero.error} onRetry={() => void zero.refetch()} isEmpty={!zero.data?.length} empty="No zero-result searches this week.">
-            <Table>
-              <TableHeader>
-                <TableRow><TableHead>Query</TableHead><TableHead className="text-right">Searches</TableHead><TableHead>Last seen</TableHead></TableRow>
-              </TableHeader>
-              <TableBody>
-                {zero.data?.map((r) => (
-                  <TableRow key={r.normalized_query}>
-                    <TableCell className="font-medium">{r.normalized_query}</TableCell>
-                    <TableCell className="text-right tabular-nums">{r.searches}</TableCell>
-                    <TableCell className="text-muted-foreground">{fmtDate(r.last_seen)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </DataState>
-        </Panel>
-
+  const dash = useQuery(dashboardQuery); const sources = useQuery(pendingSourcesQuery);
+  const zero = useQuery({ queryKey: ["admin", "zero"], queryFn: async () => (check(await supabase.rpc("admin_zero_result_queries", { p_days: 7, p_limit: 25 })) ?? []) as ZeroRow[] });
+  const flagged = useQuery({ queryKey: ["admin", "flagged"], queryFn: async () => (check(await supabase.rpc("admin_flagged_communities", { p_limit: 50 })) ?? []) as Flagged[] });
+  const [dismissed, setDismissed] = useState<Set<string>>(new Set()); const [period, setPeriod] = useState("7 days");
+  const act = useAdminMutation(async ({ id, action }: { id: string; action: "block" | "scam"; username: string }) => { const patch = action === "block" ? { status: "blocked", status_reason: "user reports" } : { scam_flag: true }; check(await supabase.from("communities").update(patch).eq("id", id)); }, v => v.action === "block" ? `@${v.username} blocked` : `@${v.username} marked as scam`);
+  const d = dash.data; const feedback = feedbackCounts(d?.feedback_7d); const feedbackTotal = Object.values(feedback).reduce((a,b) => a+b, 0);
+  const flaggedRows = (flagged.data ?? []).filter(r => !dismissed.has(r.id));
+  return <>
+    <PageHeader title="Dashboard" description="Your directory at a glance." actions={<div role="group" aria-label="Period (display only; data covers 7 days)" className="flex rounded-xl border border-border bg-card p-1">{["24 hours", "7 days", "30 days"].map(p => <Button key={p} variant={period === p ? "secondary" : "ghost"} aria-pressed={period === p} onClick={() => setPeriod(p)} className="px-3 text-xs">{p}</Button>)}</div>}/>
+    <p className="mb-5 text-xs text-muted-foreground">Search and feedback figures cover the last 7 days.</p>
+    {d && d.pending_communities > 0 ? <section className="mb-6 rounded-[14px] border border-attention-border bg-attention-bg p-5 text-attention"><div className="flex flex-wrap items-start justify-between gap-4"><div className="flex min-w-0 gap-3"><AlertTriangle className="mt-1 h-5 w-5 shrink-0" aria-hidden="true"/><div><h2 className="font-bold">{d.pending_communities.toLocaleString()} communities are waiting for review.</h2><p className="mt-1 text-sm">Imported in bulk and hidden from visitors. Nothing goes live until you activate it.</p></div></div><Button asChild><Link to="/admin/review">Open review queue<ArrowRight aria-hidden="true"/></Link></Button></div><div className="mt-4 flex flex-wrap gap-2">{sources.data?.map(s => <Button key={s.source} variant="outline" asChild className="border-attention-border bg-transparent text-attention"><Link to="/admin/review" search={{ source: s.source }}>{s.source} · {Number(s.pending_count).toLocaleString()}</Link></Button>)}</div>{sources.error ? <Button variant="link" onClick={() => void sources.refetch()}>Retry source counts</Button> : null}</section> : null}
+    <DataState isLoading={dash.isLoading} error={dash.error} onRetry={() => void dash.refetch()} isEmpty={false} empty="">
+    {d ? <>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{[["Active communities", d.active_communities], ["Pending submissions", d.pending_submissions], ["Open takedowns", d.open_takedowns], ["Blocked or scam flagged", d.blocked_communities + d.scam_flagged]].map(([label,value]) => <div key={label} className="rounded-[14px] border border-border bg-card p-5"><p className="text-sm text-muted-foreground">{label}</p><p className="mt-3 text-3xl font-bold tabular-nums">{Number(value).toLocaleString()}</p></div>)}</div>
+      <div className="my-6 grid gap-6 xl:grid-cols-[3fr_2fr]"><Panel title="Search health" hint="Last 7 days"><div className="grid grid-cols-2 gap-5 p-5 sm:grid-cols-4 xl:grid-cols-2 2xl:grid-cols-4"><Health label="Searches" value={d.searches_7d.toLocaleString()} verdict={d.searches_7d ? "Live" : "Quiet"} good={d.searches_7d > 0}/><Health label="No results" value={pct(d.zero_result_rate_7d)} verdict={d.zero_result_rate_7d == null ? "No data" : d.zero_result_rate_7d <= .1 ? "Healthy" : "Review"} good={d.zero_result_rate_7d != null && d.zero_result_rate_7d <= .1}/><Health label="Size filter relaxed" value={pct(d.relaxed_rate_7d)} verdict={d.relaxed_rate_7d == null ? "No data" : d.relaxed_rate_7d <= .2 ? "Steady" : "Review"} good={d.relaxed_rate_7d != null && d.relaxed_rate_7d <= .2}/><Health label="Average speed" value={d.avg_latency_ms_7d == null ? "—" : `${Math.round(d.avg_latency_ms_7d)} ms`} verdict={d.avg_latency_ms_7d == null ? "No data" : d.avg_latency_ms_7d < 2000 ? "Quick" : "Slower"} good={d.avg_latency_ms_7d != null && d.avg_latency_ms_7d < 2000}/></div></Panel><Panel title="Visitor feedback" hint="Last 7 days">{feedbackTotal === 0 ? <p className="p-6 text-sm text-muted-foreground">No feedback yet</p> : <div className="grid grid-cols-2 gap-4 p-5">{[["Relevant",feedback.relevant],["Not relevant",feedback.not_relevant],["Incorrect info",feedback.incorrect],["Spam or scam",feedback.spam_scam]].map(([label,value]) => <div key={label}><p className="text-xs text-muted-foreground">{label}</p><p className="mt-1 text-2xl font-bold tabular-nums">{value}</p></div>)}</div>}</Panel></div>
+    </> : <Skeleton className="h-32 w-full"/>}
+    </DataState>
+    <div className="mt-6 grid gap-6"><Panel title="Searches with no results" hint="Good candidates for new communities · last 7 days"><DataState isLoading={zero.isLoading} error={zero.error} onRetry={() => void zero.refetch()} isEmpty={!zero.data?.length} empty="No zero-result searches this week."><div className="flex flex-wrap gap-2 p-5">{zero.data?.map(r => <div key={r.normalized_query} className="inline-flex items-center rounded-full border border-border bg-muted/40 pl-4"><Button variant="link" asChild className="px-0"><Link to="/search" search={{ q: r.normalized_query }}>{r.normalized_query} <span className="text-muted-foreground">· {r.searches}</span></Link></Button><Button asChild variant="ghost" aria-label={`Add a community for ${r.normalized_query}`} className="ml-2 rounded-full"><Link to="/admin/communities">Add / edit</Link></Button></div>)}</div></DataState></Panel>
         <Panel title="Reported communities" hint="Communities with user feedback reports.">
           <DataState isLoading={flagged.isLoading} error={flagged.error} onRetry={() => void flagged.refetch()} isEmpty={!flaggedRows.length} empty="No reported communities.">
             <Table>
@@ -148,7 +69,7 @@ function DashboardPage() {
             </Table>
           </DataState>
         </Panel>
-      </div>
-    </>
-  );
+
+    </div></>;
 }
+function Health({ label, value, verdict, good }: { label: string; value: string; verdict: string; good: boolean }) { return <div><p className="text-xs text-muted-foreground">{label}</p><p className="mt-2 text-xl font-bold tabular-nums">{value}</p><p className={`mt-1 text-xs font-medium ${good ? "text-success" : "text-attention"}`}>{verdict}</p></div>; }
