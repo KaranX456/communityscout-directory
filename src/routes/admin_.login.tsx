@@ -15,7 +15,7 @@ export const Route = createFileRoute("/admin_/login")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Staff sign in — CommunityScout" },
+      { title: "Staff sign in — Community Scout" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),

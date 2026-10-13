@@ -24,7 +24,7 @@ import { check, fmtDate, useAdminMutation, type BlockTerm } from "@/lib/admin";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/admin/blocklist")({
-  head: () => ({ meta: [{ title: "Blocklist — CommunityScout Admin" }] }),
+  head: () => ({ meta: [{ title: "Blocklist — Community Scout Admin" }] }),
   component: BlocklistPage,
 });
 

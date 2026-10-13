@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { GatedContent } from "@/components/age-gate";
 import { FilterPanel } from "@/components/filters";
-import { CardSkeletons, ErrorState, RelaxedBanner } from "@/components/notices";
+import { CardSkeletons, ErrorState, RelaxedBanner, SafetyNotice } from "@/components/notices";
 import { ResultCard } from "@/components/search-result";
 import { SearchBar } from "@/components/search-bar";
 import { search } from "@/lib/api";
@@ -159,6 +159,7 @@ function SearchPage() {
               <div className="py-12"><h2 className="font-bold">No communities found for “{q}”.</h2><div className="mt-4 flex flex-wrap gap-4"><Button variant="link" className="min-h-11 px-0" onClick={() => patch({ min: 0 })}>Lower the minimum</Button><Button variant="link" className="min-h-11 px-0" onClick={clearAll}>Clear filters</Button><Button asChild variant="link" className="min-h-11 px-0"><Link to="/submit">Submit a community</Link></Button></div></div>
             ) : (
               <>
+                <div className="mb-4"><SafetyNotice /></div>
                 <ul>
                   {rows.map((row, index) => (
                     <li key={row.id}>

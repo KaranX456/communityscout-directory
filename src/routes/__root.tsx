@@ -97,7 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;700&family=Geist+Mono:wght@400&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Sans:wght@400;700&family=Geist+Mono:wght@400&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -130,7 +130,7 @@ function RootComponent() {
     // Staff area: own chrome, no age gate, always behind login.
     return (
       <QueryClientProvider client={queryClient}>
-        <Outlet />
+        <div className="admin-site min-h-screen"><Outlet /></div>
       </QueryClientProvider>
     );
   }

@@ -1,5 +1,5 @@
 export const BRAND = {
-  name: "CommunityScout",
+  name: "Community Scout",
   tagline: "Find public Telegram channels & groups",
   description:
     "A free, independent search engine for public Telegram channels and groups. Search by topic, language, country and size.",

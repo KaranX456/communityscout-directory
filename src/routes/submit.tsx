@@ -7,7 +7,7 @@ import { categoriesQuery, submitCommunity } from "@/lib/api";
 import { BRAND } from "@/lib/brand";
 
 const TITLE = `Add a community — ${BRAND.name}`;
-const DESC = "Suggest a public Telegram channel or group for the CommunityScout index.";
+const DESC = "Suggest a public Telegram channel or group for the Community Scout index.";
 
 export const Route = createFileRoute("/submit")({
   head: () => ({

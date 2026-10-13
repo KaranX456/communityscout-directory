@@ -15,7 +15,7 @@ import { supabase } from "@/lib/supabase";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/admin/import")({
-  head: () => ({ meta: [{ title: "Import — CommunityScout Admin" }] }),
+  head: () => ({ meta: [{ title: "Import — Community Scout Admin" }] }),
   component: ImportPage,
 });
 
