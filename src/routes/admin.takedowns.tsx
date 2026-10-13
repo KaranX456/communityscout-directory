@@ -12,7 +12,7 @@ import { check, fmtDate, normalizeUsername, useAdminMutation, USERNAME_RE, type 
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/admin/takedowns")({
-  head: () => ({ meta: [{ title: "Takedowns — CommunityScout Admin" }] }),
+  head: () => ({ meta: [{ title: "Takedowns — Community Scout Admin" }] }),
   component: TakedownsPage,
 });
 

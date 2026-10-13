@@ -4,3 +4,7 @@
 - [x] Correct default/relevance sorting and test URL/payload rules
 - [x] Check remaining public routes at phone/desktop widths; fix dark readability and legal columns
 - Deferred: previous broad audits and other polish tasks (outside current scope)
+- [ ] Finalize visible Community Scout naming and add search safety notice
+- [ ] Refresh admin shell, storage meter, dashboard and existing page presentation
+- [ ] Add paginated review queue with confirmed bulk and batch actions
+- [ ] Run rule tests and verify available admin/public flows

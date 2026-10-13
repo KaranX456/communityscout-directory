@@ -16,7 +16,7 @@ import { formatMembers } from "@/lib/format";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/admin/communities")({
-  head: () => ({ meta: [{ title: "Communities — CommunityScout Admin" }] }),
+  head: () => ({ meta: [{ title: "Communities — Community Scout Admin" }] }),
   component: CommunitiesPage,
 });
 

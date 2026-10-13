@@ -13,3 +13,7 @@
 - Reuse the presentation-only member-bar helper for logarithmic size comparisons; keep API helpers and URL-state logic unchanged during design work.
 
 - Normalize search sort in the shared URL-state helper and strip non-relevance sort values before invoking search, so default requests follow the backend member-order contract.
+
+- Scope admin theme tokens through `body:has(.admin-site)` so admin dialogs inherit light/dark tokens without altering public pages.
+- Share admin dashboard, source and storage query options across the shell and review surfaces to deduplicate RPC requests.
+- Keep review eligibility and storage thresholds in browser-safe pure rules with focused tests; batch mutations use existing staff RPCs.

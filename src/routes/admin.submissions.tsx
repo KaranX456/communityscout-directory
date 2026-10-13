@@ -14,7 +14,7 @@ import { check, fmtDate, useAdminMutation, type Submission } from "@/lib/admin";
 import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/admin/submissions")({
-  head: () => ({ meta: [{ title: "Submissions — CommunityScout Admin" }] }),
+  head: () => ({ meta: [{ title: "Submissions — Community Scout Admin" }] }),
   component: SubmissionsPage,
 });
 
