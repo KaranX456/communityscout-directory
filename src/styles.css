@@ -278,3 +278,41 @@ body:has(.public-site) .public-legal { max-width: 680px; font-size: 17px; line-h
 body:has(.public-site) .public-legal :is(p, ul, li, label) { font-size: 17px; color: var(--legal-body); }
 body:has(.public-site) .public-legal :is(h1, h2, h3, strong) { color: var(--foreground); }
 body:has(.public-site) .public-legal a { color: var(--primary); text-decoration: underline; overflow-wrap: anywhere; }
+
+@theme inline {
+  --color-attention: var(--attention);
+  --color-attention-bg: var(--attention-bg);
+  --color-attention-border: var(--attention-border);
+  --color-success: var(--success);
+}
+body:has(.admin-site) {
+  --background: #F4F6F4; --foreground: #14201C;
+  --card: #FFFFFF; --card-foreground: #14201C;
+  --popover: #FFFFFF; --popover-foreground: #14201C;
+  --border: #DDE3DF; --input: #DDE3DF;
+  --primary: #0F766E; --primary-foreground: #FFFFFF;
+  --muted: #EDF1EE; --muted-foreground: #5B6B64;
+  --secondary: #E3F1EE; --secondary-foreground: #0B5A53;
+  --accent: #E3F1EE; --accent-foreground: #0B5A53;
+  --ring: #0F766E; --destructive: #B42318; --destructive-foreground: #FFFFFF;
+  --attention: #B45309; --attention-bg: #FFF8EC; --attention-border: #EBC78F; --success: #15803D;
+  font-family: "DM Sans", sans-serif; background: var(--background); color: var(--foreground);
+}
+html.dark body:has(.admin-site) {
+  --background: #111A17; --foreground: #EDF4EF; --card: #19251F; --card-foreground: #EDF4EF;
+  --popover: #19251F; --popover-foreground: #EDF4EF; --border: #33453C; --input: #455B50;
+  --primary: #64C9BA; --primary-foreground: #14201C; --muted: #25372D; --muted-foreground: #ACBDB3;
+  --secondary: #203C34; --secondary-foreground: #92DBCB; --accent: #203C34; --accent-foreground: #92DBCB;
+  --ring: #64C9BA; --destructive: #FF9D95; --destructive-foreground: #14201C;
+  --attention: #F2C174; --attention-bg: #352B1C; --attention-border: #806638; --success: #85D5A0;
+}
+body:has(.admin-site) :is(button, [role="tab"], [role="combobox"], input:not([type="checkbox"]), select) { min-height: 44px; }
+body:has(.admin-site) button:has(>svg:only-child) { min-width: 44px; }
+body:has(.admin-site) [role="dialog"] > button { min-width: 44px; }
+body:has(.admin-site) :is(input, textarea, [role="combobox"]) { background: var(--card); }
+body:has(.admin-site) [role="tablist"] { height: auto; min-height: 48px; flex-wrap: wrap; }
+body:has(.admin-site) table th { background: var(--muted); height: 48px; font-size: 12px; }
+body:has(.admin-site) table :is(th,td) { padding: 12px 16px; }
+body:has(.admin-site) .admin-panel > .relative { max-width: 100%; }
+body:has(.admin-site) [class*="shadow"] { box-shadow: none; }
+body:has(.admin-site) :focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
