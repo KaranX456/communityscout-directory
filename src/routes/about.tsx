@@ -65,6 +65,23 @@ function About() {
             </Link>
             .
           </p>
+          <h2>Data sources</h2>
+          <p>
+            Community metadata comes from{" "}
+            <a href="https://www.tgatlas.org/data" target="_blank" rel="noopener noreferrer nofollow">
+              tgAtlas
+            </a>
+            , the{" "}
+            <a href="https://doi.org/10.5281/zenodo.14749767" target="_blank" rel="noopener noreferrer">
+              Telegram channels graph dataset
+            </a>{" "}
+            (Shapovalova &amp; Sofiienko, 2025, CC BY 4.0) and the{" "}
+            <a href="https://doi.org/10.25625/GDCXQK" target="_blank" rel="noopener noreferrer">
+              TeraGram dataset
+            </a>{" "}
+            (Golovin, Mohr, Priesemann et al., ODC-By). Member counts from these snapshots may be
+            out of date.
+          </p>
           <p>{BRAND.disclaimer}</p>
         </Prose>
       </div>
