@@ -17,7 +17,7 @@ const GROUPS = [
   { label: "Review", items: [{ to: "/admin/review", label: "Review queue", icon: ListChecks, count: "pending_communities" }, { to: "/admin/submissions", label: "Submissions", icon: Inbox, count: "pending_submissions" }, { to: "/admin/takedowns", label: "Takedowns", icon: ShieldAlert, count: "open_takedowns" }] },
   { label: "Directory", items: [{ to: "/admin/communities", label: "Communities", icon: Users, count: undefined }, { to: "/admin/import", label: "Import", icon: FileUp, count: undefined }, { to: "/admin/blocklist", label: "Blocklist", icon: Ban, count: undefined }] },
 ] as const;
-function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
+function NavLinks({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   const dash = useQuery(dashboardQuery);
   return <nav aria-label="Admin" className="space-y-6">{GROUPS.map(group => <div key={group.label}><p className="mb-2 px-3 text-xs font-semibold uppercase text-muted-foreground">{group.label}</p><div className="space-y-1">{group.items.map(({ to, label, icon: Icon, count }) => <Link key={to} to={to} onClick={onNavigate} activeOptions={{ exact: to === "/admin" }} activeProps={{ className: "bg-accent text-accent-foreground font-semibold" }} inactiveProps={{ className: "text-muted-foreground hover:bg-muted hover:text-foreground" }} className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"><Icon className="h-4 w-4" aria-hidden="true"/><span>{label}</span>{count && dash.data ? <span className={`ml-auto rounded-full px-2 py-0.5 text-xs tabular-nums ${count === "pending_communities" ? "bg-attention-bg text-attention" : "bg-muted text-muted-foreground"}`}>{dash.data[count].toLocaleString()}</span> : null}</Link>)}</div></div>)}</nav>;
 }
@@ -33,7 +33,7 @@ function StorageMeter() {
   const u = usage.data; const state = storageState(u.database_bytes, u.limit_bytes); const mb = (n: number) => Math.round(n / 1024 / 1024).toLocaleString();
   return <div className={`space-y-2 text-xs ${state.tone === "danger" ? "text-destructive" : state.tone === "attention" ? "text-attention" : "text-muted-foreground"}`}><div className="flex justify-between"><span>Database storage</span><span>{Math.round(state.percent)}%</span></div><Progress value={state.percent} aria-label="Database storage usage" className={state.tone === "danger" ? "[&>div]:bg-destructive" : state.tone === "attention" ? "[&>div]:bg-attention" : ""}/><p>{mb(u.database_bytes)} of {mb(u.limit_bytes)} MB</p><p>Free plan. Upgrade at 350 MB.</p></div>;
 }
-function SidebarContent({ email, onNavigate }: { email: string; onNavigate?: () => void }) {
+function SidebarContent({ email, onNavigate }: { email: string; onNavigate?: (() => void) | undefined }) {
   const signOut = useSignOut();
   return <><Brand/><div className="mt-8"><NavLinks onNavigate={onNavigate}/></div><div className="mt-auto space-y-5 border-t border-border pt-5"><StorageMeter/><p className="break-all text-xs text-muted-foreground">{email}</p><Button variant="outline" className="w-full" onClick={() => void signOut()}><LogOut aria-hidden="true"/>Sign out</Button></div></>;
 }
