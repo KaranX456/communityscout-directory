@@ -6,7 +6,6 @@ import { Toaster, toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { errMsg } from "@/lib/admin";
 import { BRAND } from "@/lib/brand";
 import { supabase } from "@/lib/supabase";
@@ -32,28 +31,17 @@ function LoginPage() {
           </span>
           {BRAND.name} staff
         </div>
-        <Tabs defaultValue="signin">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signin">Sign in</TabsTrigger>
-            <TabsTrigger value="signup">Create account</TabsTrigger>
-          </TabsList>
-          <TabsContent value="signin">
-            <AuthForm mode="signin" />
-          </TabsContent>
-          <TabsContent value="signup">
-            <p className="mb-3 rounded-lg bg-muted p-3 text-xs text-muted-foreground">
-              New accounts have <strong>no access</strong> until the owner promotes them.
-            </p>
-            <AuthForm mode="signup" />
-          </TabsContent>
-        </Tabs>
+        <SignInForm />
+        <p className="mt-4 rounded-lg bg-muted p-3 text-xs text-muted-foreground">
+          Staff accounts are created by the site owner. There is no public sign-up.
+        </p>
       </div>
       <Toaster richColors position="top-right" theme="system" />
     </main>
   );
 }
 
-function AuthForm({ mode }: { mode: "signin" | "signup" }) {
+function SignInForm() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -63,20 +51,9 @@ function AuthForm({ mode }: { mode: "signin" | "signup" }) {
     e.preventDefault();
     setBusy(true);
     try {
-      if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        void navigate({ to: "/admin" });
-      } else {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: `${window.location.origin}/admin/login` },
-        });
-        if (error) throw error;
-        if (data.session) void navigate({ to: "/admin" });
-        else toast.success("Account created. Check your email to confirm, then sign in.");
-      }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      void navigate({ to: "/admin" });
     } catch (err) {
       toast.error(errMsg(err));
     } finally {
@@ -85,25 +62,17 @@ function AuthForm({ mode }: { mode: "signin" | "signup" }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-4 space-y-4">
+    <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor={`${mode}-email`}>Email</Label>
-        <Input id={`${mode}-email`} type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Label htmlFor="signin-email">Email</Label>
+        <Input id="signin-email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor={`${mode}-pw`}>Password</Label>
-        <Input
-          id={`${mode}-pw`}
-          type="password"
-          minLength={mode === "signup" ? 8 : undefined}
-          autoComplete={mode === "signin" ? "current-password" : "new-password"}
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <Label htmlFor="signin-pw">Password</Label>
+        <Input id="signin-pw" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />
       </div>
       <Button type="submit" className="w-full" disabled={busy}>
-        {busy ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
+        {busy ? "Please wait…" : "Sign in"}
       </Button>
     </form>
   );
