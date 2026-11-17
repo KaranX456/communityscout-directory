@@ -8,11 +8,15 @@ export function SearchBar({
   autoFocus = false,
   size = "lg",
   onSubmitQuery,
+  onChangeQuery,
+  label = "Search public Telegram communities",
 }: {
   initialValue?: string;
   autoFocus?: boolean;
   size?: "lg" | "sm";
   onSubmitQuery?: (q: string) => void;
+  onChangeQuery?: ((q: string) => void) | undefined;
+  label?: string;
 }) {
   const id = useId();
   const [value, setValue] = useState(initialValue);
@@ -32,14 +36,14 @@ export function SearchBar({
       onSubmit={(e) => {
         e.preventDefault();
         const q = value.trim();
-        if (!q) return;
+         if (!q && !onChangeQuery) return;
         if (onSubmitQuery) onSubmitQuery(q);
         else navigate({ to: "/search", search: { q } });
       }}
       className={`public-search w-full ${big ? "public-search-large" : "public-search-small"}`}
     >
       <label htmlFor={id} className="sr-only">
-        Search public Telegram communities
+         {label}
       </label>
       <div className="relative flex items-center">
         <Search
@@ -51,7 +55,7 @@ export function SearchBar({
           ref={ref}
           type="search"
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+           onChange={(e) => { setValue(e.target.value); onChangeQuery?.(e.target.value); }}
           placeholder="Search a topic, language or name"
           className={`w-full rounded-md border border-border bg-card pl-11 pr-24 text-foreground shadow-card outline-none transition-shadow placeholder:text-muted-foreground focus-visible:shadow-lift ${
             big ? "h-16 text-base" : "h-12 text-sm"

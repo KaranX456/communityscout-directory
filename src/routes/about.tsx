@@ -14,6 +14,8 @@ export const Route = createFileRoute("/about")({
       { name: "description", content: DESC },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: About,
@@ -83,6 +85,7 @@ function About() {
             out of date.
           </p>
           <p>{BRAND.disclaimer}</p>
+          <p>Bot listings are indexed from public sources and are not endorsed or verified; use of any bot is at your own discretion under our Terms.</p>
         </Prose>
       </div>
     </PageShell>

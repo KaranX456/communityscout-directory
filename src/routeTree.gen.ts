@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SplatRouteImport } from './routes/$'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as BotsRouteImport } from './routes/bots'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SubmitRouteImport } from './routes/submit'
@@ -47,6 +48,11 @@ const AboutRoute = AboutRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BotsRoute = BotsRouteImport.update({
+  id: '/bots',
+  path: '/bots',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/bots': typeof BotsRoute
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/submit': typeof SubmitRoute
@@ -150,6 +157,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
+  '/bots': typeof BotsRoute
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/submit': typeof SubmitRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/$': typeof SplatRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/bots': typeof BotsRoute
   '/privacy': typeof PrivacyRoute
   '/search': typeof SearchRoute
   '/submit': typeof SubmitRoute
@@ -195,6 +204,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/admin'
+    | '/bots'
     | '/privacy'
     | '/search'
     | '/submit'
@@ -215,6 +225,7 @@ export interface FileRouteTypes {
     | '/'
     | '/$'
     | '/about'
+    | '/bots'
     | '/privacy'
     | '/search'
     | '/submit'
@@ -236,6 +247,7 @@ export interface FileRouteTypes {
     | '/$'
     | '/about'
     | '/admin'
+    | '/bots'
     | '/privacy'
     | '/search'
     | '/submit'
@@ -258,6 +270,7 @@ export interface RootRouteChildren {
   SplatRoute: typeof SplatRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
+  BotsRoute: typeof BotsRoute
   PrivacyRoute: typeof PrivacyRoute
   SearchRoute: typeof SearchRoute
   SubmitRoute: typeof SubmitRoute
@@ -296,6 +309,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bots': {
+      id: '/bots'
+      path: '/bots'
+      fullPath: '/bots'
+      preLoaderRoute: typeof BotsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -433,6 +453,7 @@ const rootRouteChildren: RootRouteChildren = {
   SplatRoute: SplatRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
+  BotsRoute: BotsRoute,
   PrivacyRoute: PrivacyRoute,
   SearchRoute: SearchRoute,
   SubmitRoute: SubmitRoute,

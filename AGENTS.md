@@ -17,3 +17,4 @@
 - Scope admin theme tokens through `body:has(.admin-site)` so admin dialogs inherit light/dark tokens without altering public pages.
 - Share admin dashboard, source and storage query options across the shell and review surfaces to deduplicate RPC requests.
 - Keep review eligibility and storage thresholds in browser-safe pure rules with focused tests; batch mutations use existing staff RPCs.
+- Keep bot queries and URL validation separate from community helpers; prime paged bot RPC queries in the route loader and subscribe through TanStack Query so bots never affect community counts or search.

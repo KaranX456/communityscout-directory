@@ -8,3 +8,5 @@
 - [ ] Refresh admin shell, storage meter, dashboard and existing page presentation
 - [ ] Add paginated review queue with confirmed bulk and batch actions
 - [ ] Run rule tests and verify available admin/public flows
+- [x] Add the isolated Bots page, public links, sitemap entry and About disclaimer
+- [x] Verify bot rules and the live paged search/category flow

@@ -16,8 +16,8 @@ export function SiteHeader() {
         <svg viewBox="0 0 36 36" className="public-logo h-9 w-9 shrink-0" aria-hidden="true"><rect width="36" height="36" rx="9"/><path d="M9 11h18v3H9zm0 6h13v3H9zm0 6h8v3H9z"/></svg>
         <span className="truncate">{BRAND.name}</span>
       </Link>
-      <nav aria-label="Main" className="hidden items-center gap-5 sm:flex"><HeaderLink to="/category">Browse</HeaderLink><HeaderLink to="/submit">Submit a link</HeaderLink><HeaderLink to="/about">About</HeaderLink></nav>
-      <Sheet open={open} onOpenChange={setOpen}><SheetTrigger asChild><Button variant="ghost" size="icon" className="min-h-11 min-w-11 sm:hidden" aria-label="Open menu"><Menu /></Button></SheetTrigger><SheetContent className="w-72"><SheetTitle>Menu</SheetTitle><nav aria-label="Mobile" className="mt-8 flex flex-col" onClick={() => setOpen(false)}><HeaderLink to="/category">Browse</HeaderLink><HeaderLink to="/submit">Submit a link</HeaderLink><HeaderLink to="/about">About</HeaderLink></nav></SheetContent></Sheet>
+      <nav aria-label="Main" className="hidden items-center gap-5 sm:flex"><HeaderLink to="/category">Browse</HeaderLink><HeaderLink to="/bots">Bots</HeaderLink><HeaderLink to="/submit">Submit a link</HeaderLink><HeaderLink to="/about">About</HeaderLink></nav>
+      <Sheet open={open} onOpenChange={setOpen}><SheetTrigger asChild><Button variant="ghost" size="icon" className="min-h-11 min-w-11 sm:hidden" aria-label="Open menu"><Menu /></Button></SheetTrigger><SheetContent className="w-72"><SheetTitle>Menu</SheetTitle><nav aria-label="Mobile" className="mt-8 flex flex-col" onClick={() => setOpen(false)}><HeaderLink to="/category">Browse</HeaderLink><HeaderLink to="/bots">Bots</HeaderLink><HeaderLink to="/submit">Submit a link</HeaderLink><HeaderLink to="/about">About</HeaderLink></nav></SheetContent></Sheet>
     </div>
   </header>;
 }
@@ -29,7 +29,7 @@ export function SiteFooter() {
   const total = facets.data?.total ?? 0;
   return <footer className="public-footer mt-20 border-t border-border"><div className="mx-auto flex max-w-6xl flex-col justify-between gap-2 px-4 py-5 text-[13px] text-muted-foreground sm:flex-row sm:items-center">
     <p>{total > 0 ? <><span className="font-mono">{total.toLocaleString()}</span> public communities · </> : null}member counts come from Telegram or from 2025 dataset snapshots and may be out of date</p>
-    <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-5 gap-y-1"><Link to="/terms">Terms</Link><Link to="/privacy">Privacy</Link><Link to="/takedown">Takedown</Link><a href="https://www.tgatlas.org/data" target="_blank" rel="noopener noreferrer nofollow">Channel metadata from tgAtlas</a><a href="https://doi.org/10.5281/zenodo.14749767" target="_blank" rel="noopener noreferrer nofollow">Telegram channels graph dataset (Shapovalova &amp; Sofiienko, 2025, CC BY 4.0)</a><a href="https://doi.org/10.25625/GDCXQK" target="_blank" rel="noopener noreferrer nofollow">TeraGram dataset (Golovin, Mohr, Priesemann et al., ODC-By)</a><span>Not affiliated with Telegram</span></nav>
+    <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-5 gap-y-1"><Link to="/bots">Bots</Link><Link to="/terms">Terms</Link><Link to="/privacy">Privacy</Link><Link to="/takedown">Takedown</Link><a href="https://www.tgatlas.org/data" target="_blank" rel="noopener noreferrer nofollow">Channel metadata from tgAtlas</a><a href="https://doi.org/10.5281/zenodo.14749767" target="_blank" rel="noopener noreferrer nofollow">Telegram channels graph dataset (Shapovalova &amp; Sofiienko, 2025, CC BY 4.0)</a><a href="https://doi.org/10.25625/GDCXQK" target="_blank" rel="noopener noreferrer nofollow">TeraGram dataset (Golovin, Mohr, Priesemann et al., ODC-By)</a><span>Not affiliated with Telegram</span></nav>
   </div></footer>;
 }
 export function PageShell({ children, className = "" }: { children: ReactNode; className?: string }) {
