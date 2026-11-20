@@ -4,8 +4,8 @@ import { supabase } from "./supabase";
 export const BOT_PAGE_SIZE = 24;
 export const BOT_VERIFICATION_LABEL = "Not yet verified";
 export type BotSearch = { q?: string | undefined; category?: string | undefined; page?: number | undefined };
-export type Bot = { id: string; username: string; title: string | null; description: string | null; category: string | null; adult: boolean; total_count: number };
-export type BotFacets = { total: number; categories: { slug: string; name: string; count: number }[] };
+export type Bot = { id: string; username: string; title: string | null; description: string | null; category: string | null; adult: boolean; verified: boolean; total_count: number };
+export type BotFacets = { total: number; verified?: number | undefined; categories: { slug: string; name: string; count: number }[] };
 
 export function validateBotSearch(raw: Record<string, unknown>): BotSearch {
   const page = Number(raw["page"]);

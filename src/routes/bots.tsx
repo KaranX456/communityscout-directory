@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { BadgeCheck, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { CategoryIcon } from "@/components/category-icon";
 import { SearchBar } from "@/components/search-bar";
@@ -80,6 +80,7 @@ function BotsPage() {
 
   return <PageShell>
     <h1 className="text-3xl font-bold">Telegram Bots</h1>
+    {facets.verified !== undefined ? <p className="mt-2 text-sm text-muted-foreground"><span className="font-mono">{facets.verified.toLocaleString()}</span> of <span className="font-mono">{facets.total.toLocaleString()}</span> bots checked live</p> : null}
     <div className="mt-6 max-w-3xl"><SearchBar label="Search Telegram bots" initialValue={state.q ?? ""} onSubmitQuery={updateQuery} onChangeQuery={(q) => {
       clearTimeout(timer.current);
       timer.current = setTimeout(() => updateQuery(q), 350);
@@ -96,7 +97,7 @@ function BotsPage() {
               <CardHeader className="p-5"><div className="flex min-w-0 items-start gap-3"><CategoryIcon slug={bot.category ?? "other"} /><div className="min-w-0"><h2 className="break-words text-lg font-bold">{bot.title?.trim() || `@${bot.username}`}</h2><p className="mt-1 break-all text-sm text-muted-foreground">@{bot.username}</p></div></div></CardHeader>
               <CardContent className="flex-1 px-5">
                 {bot.description ? <p className="result-description mb-4 line-clamp-3 break-words text-sm">{bot.description}</p> : null}
-                <div className="flex flex-wrap gap-2">{bot.category ? <Badge variant="secondary" className="max-w-full break-words">{categories.get(bot.category) ?? bot.category}</Badge> : null}<Badge variant="outline" className="text-muted-foreground">{BOT_VERIFICATION_LABEL}</Badge></div>
+                <div className="flex flex-wrap gap-2">{bot.category ? <Badge variant="secondary" className="max-w-full break-words">{categories.get(bot.category) ?? bot.category}</Badge> : null}{bot.verified ? <Badge variant="secondary" aria-label="Verified: this bot was checked and exists"><BadgeCheck aria-hidden="true" className="h-3.5 w-3.5" />Verified</Badge> : <Badge variant="outline" className="text-muted-foreground">{BOT_VERIFICATION_LABEL}</Badge>}</div>
               </CardContent>
               <CardFooter className="px-5"><Button asChild variant="outline" className="min-h-11 w-full"><a href={`https://t.me/${bot.username}`} target="_blank" rel="noopener noreferrer nofollow">Open in Telegram</a></Button></CardFooter>
             </Card>
