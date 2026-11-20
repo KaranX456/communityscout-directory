@@ -21,6 +21,7 @@ import { Route as TakedownRouteImport } from './routes/takedown'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminBlocklistRouteImport } from './routes/admin.blocklist'
+import { Route as AdminBotsRouteImport } from './routes/admin.bots'
 import { Route as AdminCommunitiesRouteImport } from './routes/admin.communities'
 import { Route as AdminImportRouteImport } from './routes/admin.import'
 import { Route as AdminReviewRouteImport } from './routes/admin.review'
@@ -90,6 +91,11 @@ const AdminBlocklistRoute = AdminBlocklistRouteImport.update({
   path: '/blocklist',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBotsRoute = AdminBotsRouteImport.update({
+  id: '/bots',
+  path: '/bots',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCommunitiesRoute = AdminCommunitiesRouteImport.update({
   id: '/communities',
   path: '/communities',
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
   '/admin/blocklist': typeof AdminBlocklistRoute
+  '/admin/bots': typeof AdminBotsRoute
   '/admin/communities': typeof AdminCommunitiesRoute
   '/admin/import': typeof AdminImportRoute
   '/admin/review': typeof AdminReviewRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
   '/admin/blocklist': typeof AdminBlocklistRoute
+  '/admin/bots': typeof AdminBotsRoute
   '/admin/communities': typeof AdminCommunitiesRoute
   '/admin/import': typeof AdminImportRoute
   '/admin/review': typeof AdminReviewRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/takedown': typeof TakedownRoute
   '/terms': typeof TermsRoute
   '/admin/blocklist': typeof AdminBlocklistRoute
+  '/admin/bots': typeof AdminBotsRoute
   '/admin/communities': typeof AdminCommunitiesRoute
   '/admin/import': typeof AdminImportRoute
   '/admin/review': typeof AdminReviewRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/takedown'
     | '/terms'
     | '/admin/blocklist'
+    | '/admin/bots'
     | '/admin/communities'
     | '/admin/import'
     | '/admin/review'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/takedown'
     | '/terms'
     | '/admin/blocklist'
+    | '/admin/bots'
     | '/admin/communities'
     | '/admin/import'
     | '/admin/review'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/takedown'
     | '/terms'
     | '/admin/blocklist'
+    | '/admin/bots'
     | '/admin/communities'
     | '/admin/import'
     | '/admin/review'
@@ -367,6 +379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBlocklistRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/bots': {
+      id: '/admin/bots'
+      path: '/bots'
+      fullPath: '/admin/bots'
+      preLoaderRoute: typeof AdminBotsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/communities': {
       id: '/admin/communities'
       path: '/communities'
@@ -428,6 +447,7 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminBlocklistRoute: typeof AdminBlocklistRoute
+  AdminBotsRoute: typeof AdminBotsRoute
   AdminCommunitiesRoute: typeof AdminCommunitiesRoute
   AdminImportRoute: typeof AdminImportRoute
   AdminReviewRoute: typeof AdminReviewRoute
@@ -438,6 +458,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminBlocklistRoute: AdminBlocklistRoute,
+  AdminBotsRoute: AdminBotsRoute,
   AdminCommunitiesRoute: AdminCommunitiesRoute,
   AdminImportRoute: AdminImportRoute,
   AdminReviewRoute: AdminReviewRoute,

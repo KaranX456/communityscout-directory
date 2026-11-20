@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertTriangle, Ban, Compass, FileUp, Inbox, LayoutDashboard, LogOut, Menu, ShieldAlert, Users, ListChecks } from "lucide-react";
+import { AlertTriangle, Ban, Bot, Compass, FileUp, Inbox, LayoutDashboard, LogOut, Menu, ShieldAlert, Users, ListChecks } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { ThemeToggle } from "@/components/theme";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { BRAND } from "@/lib/brand";
 import { supabase } from "@/lib/supabase";
 import { dashboardQuery, storageQuery } from "@/lib/admin-review";
+import { botsDashboardQuery } from "@/lib/admin-bots";
 import { storageState } from "@/lib/admin-rules";
 
 const GROUPS = [
@@ -19,7 +20,8 @@ const GROUPS = [
 ] as const;
 function NavLinks({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   const dash = useQuery(dashboardQuery);
-  return <nav aria-label="Admin" className="space-y-6">{GROUPS.map(group => <div key={group.label}><p className="mb-2 px-3 text-xs font-semibold uppercase text-muted-foreground">{group.label}</p><div className="space-y-1">{group.items.map(({ to, label, icon: Icon, count }) => <Link key={to} to={to} onClick={onNavigate} activeOptions={{ exact: to === "/admin" }} activeProps={{ className: "bg-accent text-accent-foreground font-semibold" }} inactiveProps={{ className: "text-muted-foreground hover:bg-muted hover:text-foreground" }} className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"><Icon className="h-4 w-4" aria-hidden="true"/><span>{label}</span>{count && dash.data ? <span className={`ml-auto rounded-full px-2 py-0.5 text-xs tabular-nums ${count === "pending_communities" ? "bg-attention-bg text-attention" : "bg-muted text-muted-foreground"}`}>{dash.data[count].toLocaleString()}</span> : null}</Link>)}</div></div>)}</nav>;
+  const bots = useQuery(botsDashboardQuery);
+  return <nav aria-label="Admin" className="space-y-6">{GROUPS.map(group => <div key={group.label}><p className="mb-2 px-3 text-xs font-semibold uppercase text-muted-foreground">{group.label}</p><div className="space-y-1">{group.items.map(({ to, label, icon: Icon, count }) => <Link key={to} to={to} onClick={onNavigate} activeOptions={{ exact: to === "/admin" }} activeProps={{ className: "bg-accent text-accent-foreground font-semibold" }} inactiveProps={{ className: "text-muted-foreground hover:bg-muted hover:text-foreground" }} className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"><Icon className="h-4 w-4" aria-hidden="true"/><span>{label}</span>{count && dash.data ? <span className={`ml-auto rounded-full px-2 py-0.5 text-xs tabular-nums ${count === "pending_communities" ? "bg-attention-bg text-attention" : "bg-muted text-muted-foreground"}`}>{dash.data[count].toLocaleString()}</span> : null}</Link>)}</div></div>)}<div><p className="mb-2 px-3 text-xs font-semibold uppercase text-muted-foreground">Bots</p><Link to="/admin/bots" onClick={onNavigate} activeProps={{ className: "bg-accent text-accent-foreground font-semibold" }} inactiveProps={{ className: "text-muted-foreground hover:bg-muted hover:text-foreground" }} className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors"><Bot className="h-4 w-4" aria-hidden="true"/><span>Bots</span>{bots.data ? <span className="ml-auto rounded-full bg-attention-bg px-2 py-0.5 text-xs tabular-nums text-attention">{bots.data.held.toLocaleString()}</span> : null}</Link></div></nav>;
 }
 export function useSignOut() {
   const qc = useQueryClient(); const navigate = useNavigate();

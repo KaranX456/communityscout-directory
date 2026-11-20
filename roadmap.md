@@ -10,3 +10,5 @@
 - [ ] Run rule tests and verify available admin/public flows
 - [x] Add the isolated Bots page, public links, sitemap entry and About disclaimer
 - [x] Verify bot rules and the live paged search/category flow
+- [ ] Add isolated staff Bots queries, review screen, navigation and dashboard tiles
+- [ ] Test Bots filter/action rules and verify available admin access
